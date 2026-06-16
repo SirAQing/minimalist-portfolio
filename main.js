@@ -295,7 +295,7 @@
       kgCtx.beginPath();
       kgCtx.moveTo(a.x, a.y);
       kgCtx.lineTo(b.x, b.y);
-      kgCtx.strokeStyle = isHighlighted ? "rgba(0, 229, 160, 0.4)" : "rgba(255, 255, 255, 0.06)";
+      kgCtx.strokeStyle = isHighlighted ? "rgba(0, 229, 160, 0.5)" : "rgba(255, 255, 255, 0.25)";
       kgCtx.lineWidth = isHighlighted ? 1.2 : 0.5;
       kgCtx.stroke();
     });
