@@ -445,13 +445,13 @@
         const dx = pet.targetX - pet.x;
         const dy = pet.targetY - pet.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 20) pickWanderTarget(pet);
+        if (dist < 60) pickWanderTarget(pet);
       }
 
       const dx = tx - pet.x;
       const dy = ty - pet.y;
-      const springForce = pet.mode === "goto" ? 0.012 : 0.003;
-      const damping = 0.94;
+      const springForce = pet.mode === "goto" ? 0.004 : 0.001;
+      const damping = 0.95;
 
       pet.vx += dx * springForce;
       pet.vy += dy * springForce;
