@@ -370,295 +370,103 @@
   window.addEventListener("resize", () => { if (kgInitialized) initKnowledgeGraph(); });
 
   // ── 6. Pet Characters (Claw + Sparky) ───
-  // Claw: ghost/jellyfish (Claude-inspired) — teal #00e5a0
-  // Sparky: block robot (Codex-inspired) — blue #64b5f6
-  // Always visible, wander freely, converge on click
+  // Using actual pet images, wander freely, converge on click
+  // Slower, smoother movement
 
-  const petCanvas = document.createElement("canvas");
-  petCanvas.id = "pet-canvas";
-  petCanvas.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;";
-  document.body.appendChild(petCanvas);
-  const pCtx = petCanvas.getContext("2d");
+  const petContainer = document.createElement("div");
+  petContainer.id = "pet-container";
+  petContainer.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;overflow:hidden;";
+  document.body.appendChild(petContainer);
 
-  function resizePetCanvas() {
-    petCanvas.width = window.innerWidth;
-    petCanvas.height = window.innerHeight;
-  }
-  resizePetCanvas();
-  window.addEventListener("resize", resizePetCanvas);
+  const petImages = [
+    { src: "assets/claude-code.png", size: 50 },
+    { src: "assets/codex.png", size: 50 },
+  ];
 
-  class Pet {
-    constructor(color, type, label) {
-      this.x = Math.random() * petCanvas.width;
-      this.y = Math.random() * petCanvas.height;
-      this.vx = 0;
-      this.vy = 0;
-      this.color = color;
-      this.type = type;
-      this.label = label;
-      this.time = Math.random() * 1000;
-      this.blinkTimer = Math.random() * 150 + 80;
-      this.isBlinking = false;
-      this.mode = "wander";
-      this.waitTimer = 0;
-      this.pickNewWanderTarget();
-    }
+  const petEls = [];
+  let petImagesLoaded = 0;
 
-    pickNewWanderTarget() {
-      const margin = 100;
-      this.wanderTargetX = margin + Math.random() * (petCanvas.width - margin * 2);
-      this.wanderTargetY = margin + Math.random() * (petCanvas.height - margin * 2);
-    }
+  petImages.forEach((info, i) => {
+    const img = new Image();
+    img.src = info.src;
+    img.onload = () => { petImagesLoaded++; };
 
-    goTo(px, py) {
-      this.mode = "goto";
-      this.gotoTargetX = px;
-      this.gotoTargetY = py;
-      this.waitTimer = 180;
-    }
+    const el = document.createElement("div");
+    el.style.cssText = `position:absolute;width:${info.size}px;height:${info.size}px;transition:none;`;
+    const inner = document.createElement("img");
+    inner.src = info.src;
+    inner.style.cssText = "width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 8px rgba(255,255,255,0.1));";
+    inner.style.pointerEvents = "none";
+    el.appendChild(inner);
+    petContainer.appendChild(el);
 
-    update() {
-      this.time += 0.025;
-      this.blinkTimer--;
-      if (this.blinkTimer <= 0) {
-        this.isBlinking = true;
-        if (this.blinkTimer < -10) {
-          this.isBlinking = false;
-          this.blinkTimer = Math.random() * 180 + 80;
-        }
-      }
+    petEls.push({
+      el,
+      x: Math.random() * (window.innerWidth - 100) + 50,
+      y: Math.random() * (window.innerHeight - 100) + 50,
+      vx: 0,
+      vy: 0,
+      mode: "wander",
+      targetX: 0,
+      targetY: 0,
+      waitTimer: 0,
+    });
+  });
 
-      let tx, ty;
-      if (this.mode === "goto") {
-        tx = this.gotoTargetX;
-        ty = this.gotoTargetY;
-        this.waitTimer--;
-        if (this.waitTimer <= 0) {
-          this.mode = "wander";
-          this.pickNewWanderTarget();
-        }
-      } else {
-        const dx = this.wanderTargetX - this.x;
-        const dy = this.wanderTargetY - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 30) {
-          this.pickNewWanderTarget();
-        }
-        tx = this.wanderTargetX;
-        ty = this.wanderTargetY;
-      }
-
-      const dx = tx - this.x;
-      const dy = ty - this.y;
-      const springForce = this.mode === "goto" ? 0.06 : 0.015;
-      const damping = 0.88;
-
-      this.vx += dx * springForce;
-      this.vy += dy * springForce;
-      this.vx *= damping;
-      this.vy *= damping;
-
-      this.x += this.vx;
-      this.y += this.vy;
-
-      // Keep within viewport
-      const pad = 40;
-      if (this.x < pad) { this.x = pad; this.vx *= -0.5; }
-      if (this.x > petCanvas.width - pad) { this.x = petCanvas.width - pad; this.vx *= -0.5; }
-      if (this.y < pad) { this.y = pad; this.vy *= -0.5; }
-      if (this.y > petCanvas.height - pad) { this.y = petCanvas.height - pad; this.vy *= -0.5; }
-
-      return Math.sin(this.time) * 4;
-    }
-
-    drawGhost(ctx, bob) {
-      const x = this.x;
-      const y = this.y + bob;
-      const r = 26;
-
-      // Outer glow
-      const glow = ctx.createRadialGradient(x, y - 8, r * 0.2, x, y, r * 2.5);
-      glow.addColorStop(0, "rgba(0, 229, 160, 0.25)");
-      glow.addColorStop(0.5, "rgba(0, 229, 160, 0.08)");
-      glow.addColorStop(1, "rgba(0, 229, 160, 0)");
-      ctx.beginPath();
-      ctx.arc(x, y, r * 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = glow;
-      ctx.fill();
-
-      // Body (ghost shape)
-      ctx.beginPath();
-      ctx.moveTo(x - r, y + r * 0.4);
-      ctx.quadraticCurveTo(x - r, y - r * 1.1, x, y - r * 1.1);
-      ctx.quadraticCurveTo(x + r, y - r * 1.1, x + r, y + r * 0.4);
-      const waveCount = 3;
-      const waveWidth = (2 * r) / waveCount;
-      for (let i = 0; i < waveCount; i++) {
-        const wx = x + r - (i + 0.5) * waveWidth;
-        const wy = y + r * 0.4 + (i % 2 === 0 ? r * 0.5 : -r * 0.1);
-        ctx.quadraticCurveTo(wx, wy, x + r - (i + 1) * waveWidth, y + r * 0.4);
-      }
-      ctx.closePath();
-
-      const bodyGrad = ctx.createLinearGradient(x, y - r, x, y + r);
-      bodyGrad.addColorStop(0, "rgba(0, 229, 160, 0.35)");
-      bodyGrad.addColorStop(1, "rgba(0, 229, 160, 0.1)");
-      ctx.fillStyle = bodyGrad;
-      ctx.fill();
-      ctx.strokeStyle = "rgba(0, 229, 160, 0.7)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Eyes
-      const eyeY = y - r * 0.2;
-      const eyeSpacing = r * 0.38;
-      if (!this.isBlinking) {
-        ctx.beginPath();
-        ctx.arc(x - eyeSpacing, eyeY, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = "#00e5a0";
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x + eyeSpacing, eyeY, 3.5, 0, Math.PI * 2);
-        ctx.fill();
-        // Eye glow
-        ctx.beginPath();
-        ctx.arc(x - eyeSpacing, eyeY, 7, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(0, 229, 160, 0.15)";
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x + eyeSpacing, eyeY, 7, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        ctx.beginPath();
-        ctx.moveTo(x - eyeSpacing - 5, eyeY);
-        ctx.lineTo(x - eyeSpacing + 5, eyeY);
-        ctx.strokeStyle = "rgba(0, 229, 160, 0.8)";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x + eyeSpacing - 5, eyeY);
-        ctx.lineTo(x + eyeSpacing + 5, eyeY);
-        ctx.stroke();
-      }
-
-      // Label
-      ctx.fillStyle = "rgba(0, 229, 160, 0.5)";
-      ctx.font = '9px -apple-system, "PingFang SC", sans-serif';
-      ctx.textAlign = "center";
-      ctx.fillText(this.label, x, y + r + 18);
-    }
-
-    drawRobot(ctx, bob) {
-      const x = this.x;
-      const y = this.y + bob;
-      const size = 20;
-
-      // Outer glow
-      const glow = ctx.createRadialGradient(x, y, size * 0.2, x, y, size * 2.5);
-      glow.addColorStop(0, "rgba(100, 181, 246, 0.2)");
-      glow.addColorStop(0.5, "rgba(100, 181, 246, 0.06)");
-      glow.addColorStop(1, "rgba(100, 181, 246, 0)");
-      ctx.beginPath();
-      ctx.arc(x, y, size * 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = glow;
-      ctx.fill();
-
-      // Body (rounded square)
-      const s = size;
-      ctx.beginPath();
-      ctx.moveTo(x - s + 6, y - s);
-      ctx.lineTo(x + s - 6, y - s);
-      ctx.quadraticCurveTo(x + s, y - s, x + s, y - s + 6);
-      ctx.lineTo(x + s, y + s - 6);
-      ctx.quadraticCurveTo(x + s, y + s, x + s - 6, y + s);
-      ctx.lineTo(x - s + 6, y + s);
-      ctx.quadraticCurveTo(x - s, y + s, x - s, y + s - 6);
-      ctx.lineTo(x - s, y - s + 6);
-      ctx.quadraticCurveTo(x - s, y - s, x - s + 6, y - s);
-      ctx.closePath();
-      const bodyGrad = ctx.createLinearGradient(x - s, y - s, x + s, y + s);
-      bodyGrad.addColorStop(0, "rgba(100, 181, 246, 0.3)");
-      bodyGrad.addColorStop(1, "rgba(100, 181, 246, 0.08)");
-      ctx.fillStyle = bodyGrad;
-      ctx.fill();
-      ctx.strokeStyle = "rgba(100, 181, 246, 0.7)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Antenna
-      ctx.beginPath();
-      ctx.moveTo(x, y - s);
-      ctx.lineTo(x, y - s - 8);
-      ctx.strokeStyle = "rgba(100, 181, 246, 0.6)";
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(x, y - s - 8, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(100, 181, 246, 0.8)";
-      ctx.fill();
-      // Antenna glow
-      ctx.beginPath();
-      ctx.arc(x, y - s - 8, 6, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(100, 181, 246, 0.12)";
-      ctx.fill();
-
-      // Eyes (LED dots)
-      const eyeY = y - 2;
-      const eyeSpacing = 6;
-      if (!this.isBlinking) {
-        ctx.beginPath();
-        ctx.arc(x - eyeSpacing, eyeY, 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(100, 181, 246, 1)";
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x + eyeSpacing, eyeY, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x - eyeSpacing, eyeY, 7, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(100, 181, 246, 0.18)";
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x + eyeSpacing, eyeY, 7, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Feet
-      ctx.fillStyle = "rgba(100, 181, 246, 0.35)";
-      ctx.fillRect(x - 7, y + s, 4, 3);
-      ctx.fillRect(x + 3, y + s, 4, 3);
-
-      // Label
-      ctx.fillStyle = "rgba(100, 181, 246, 0.5)";
-      ctx.font = '9px -apple-system, "PingFang SC", sans-serif';
-      ctx.textAlign = "center";
-      ctx.fillText(this.label, x, y + s + 18);
-    }
-
-    draw(ctx) {
-      const bob = this.update();
-      if (this.type === "ghost") {
-        this.drawGhost(ctx, bob);
-      } else {
-        this.drawRobot(ctx, bob);
-      }
-    }
+  function pickWanderTarget(pet) {
+    const margin = 80;
+    pet.targetX = margin + Math.random() * (window.innerWidth - margin * 2);
+    pet.targetY = margin + Math.random() * (window.innerHeight - margin * 2);
   }
 
-  const claw = new Pet("#00e5a0", "ghost", "Claw");
-  const sparky = new Pet("#64b5f6", "robot", "Sparky");
+  petEls.forEach(pickWanderTarget);
 
-  // On click, both pets converge to click position
   document.addEventListener("click", (e) => {
-    const px = e.clientX;
-    const py = e.clientY;
-    claw.goTo(px - 25, py);
-    sparky.goTo(px + 25, py);
+    petEls.forEach((pet, i) => {
+      pet.mode = "goto";
+      pet.targetX = e.clientX + (i === 0 ? -30 : 30);
+      pet.targetY = e.clientY;
+      pet.waitTimer = 200;
+    });
   });
 
   function animatePets() {
-    pCtx.clearRect(0, 0, petCanvas.width, petCanvas.height);
-    claw.draw(pCtx);
-    sparky.draw(pCtx);
+    petEls.forEach((pet) => {
+      let tx = pet.targetX;
+      let ty = pet.targetY;
+
+      if (pet.mode === "goto") {
+        pet.waitTimer--;
+        if (pet.waitTimer <= 0) {
+          pet.mode = "wander";
+          pickWanderTarget(pet);
+        }
+      } else {
+        const dx = pet.targetX - pet.x;
+        const dy = pet.targetY - pet.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 20) pickWanderTarget(pet);
+      }
+
+      const dx = tx - pet.x;
+      const dy = ty - pet.y;
+      const springForce = pet.mode === "goto" ? 0.025 : 0.006;
+      const damping = 0.92;
+
+      pet.vx += dx * springForce;
+      pet.vy += dy * springForce;
+      pet.vx *= damping;
+      pet.vy *= damping;
+
+      pet.x += pet.vx;
+      pet.y += pet.vy;
+
+      // Gentle bobbing
+      const bob = Math.sin(Date.now() * 0.002 + pet.x) * 3;
+
+      pet.el.style.transform = `translate(${pet.x - 25}px, ${pet.y - 25 + bob}px)`;
+    });
+
     requestAnimationFrame(animatePets);
   }
   animatePets();
