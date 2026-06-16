@@ -379,8 +379,8 @@
   document.body.appendChild(petContainer);
 
   const petImages = [
-    { src: "assets/claude-code.png", size: 50 },
-    { src: "assets/codex.png", size: 50 },
+    { src: "assets/claude-code.png", size: 60 },
+    { src: "assets/codex.png", size: 60 },
   ];
 
   const petEls = [];
@@ -450,8 +450,8 @@
 
       const dx = tx - pet.x;
       const dy = ty - pet.y;
-      const springForce = pet.mode === "goto" ? 0.025 : 0.006;
-      const damping = 0.92;
+      const springForce = pet.mode === "goto" ? 0.012 : 0.003;
+      const damping = 0.94;
 
       pet.vx += dx * springForce;
       pet.vy += dy * springForce;
@@ -462,9 +462,9 @@
       pet.y += pet.vy;
 
       // Gentle bobbing
-      const bob = Math.sin(Date.now() * 0.002 + pet.x) * 3;
+      const bob = Math.sin(Date.now() * 0.0015 + pet.x) * 4;
 
-      pet.el.style.transform = `translate(${pet.x - 25}px, ${pet.y - 25 + bob}px)`;
+      pet.el.style.transform = `translate(${pet.x - 30}px, ${pet.y - 30 + bob}px)`;
     });
 
     requestAnimationFrame(animatePets);
