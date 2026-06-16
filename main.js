@@ -384,7 +384,6 @@
   ];
 
   const petEls = [];
-  let petImagesLoaded = 0;
 
   petImages.forEach((info, i) => {
     const img = new Image();
@@ -406,63 +405,44 @@
       y: Math.random() * (window.innerHeight - 100) + 50,
       vx: 0,
       vy: 0,
-      mode: "wander",
       targetX: 0,
       targetY: 0,
-      waitTimer: 0,
+      hasTarget: false,
     });
   });
 
-  function pickWanderTarget(pet) {
-    const margin = 80;
-    pet.targetX = margin + Math.random() * (window.innerWidth - margin * 2);
-    pet.targetY = margin + Math.random() * (window.innerHeight - margin * 2);
-  }
-
-  petEls.forEach(pickWanderTarget);
-
   document.addEventListener("click", (e) => {
     petEls.forEach((pet, i) => {
-      pet.mode = "goto";
-      pet.targetX = e.clientX + (i === 0 ? -30 : 30);
+      pet.hasTarget = true;
+      pet.targetX = e.clientX + (i === 0 ? -35 : 35);
       pet.targetY = e.clientY;
-      pet.waitTimer = 200;
     });
   });
 
   function animatePets() {
     petEls.forEach((pet) => {
-      let tx = pet.targetX;
-      let ty = pet.targetY;
-
-      if (pet.mode === "goto") {
-        pet.waitTimer--;
-        if (pet.waitTimer <= 0) {
-          pet.mode = "wander";
-          pickWanderTarget(pet);
-        }
-      } else {
+      if (pet.hasTarget) {
         const dx = pet.targetX - pet.x;
         const dy = pet.targetY - pet.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 60) pickWanderTarget(pet);
+
+        if (dist < 5) {
+          pet.hasTarget = false;
+          pet.vx = 0;
+          pet.vy = 0;
+        } else {
+          const springForce = 0.02;
+          const damping = 0.85;
+          pet.vx += dx * springForce;
+          pet.vy += dy * springForce;
+          pet.vx *= damping;
+          pet.vy *= damping;
+          pet.x += pet.vx;
+          pet.y += pet.vy;
+        }
       }
 
-      const dx = tx - pet.x;
-      const dy = ty - pet.y;
-      const springForce = pet.mode === "goto" ? 0.004 : 0.001;
-      const damping = 0.95;
-
-      pet.vx += dx * springForce;
-      pet.vy += dy * springForce;
-      pet.vx *= damping;
-      pet.vy *= damping;
-
-      pet.x += pet.vx;
-      pet.y += pet.vy;
-
-      // Gentle bobbing
-      const bob = Math.sin(Date.now() * 0.0015 + pet.x) * 4;
+      const bob = Math.sin(Date.now() * 0.002 + pet.x * 0.01) * 5;
 
       pet.el.style.transform = `translate(${pet.x - 30}px, ${pet.y - 30 + bob}px)`;
     });
