@@ -379,8 +379,8 @@
   document.body.appendChild(petContainer);
 
   const petImages = [
-    { src: "assets/claude-code.png", size: 60 },
-    { src: "assets/codex.png", size: 60 },
+    { src: "assets/claude-code.png", size: 80 },
+    { src: "assets/codex.png", size: 80 },
   ];
 
   const petEls = [];
@@ -414,7 +414,7 @@
   document.addEventListener("click", (e) => {
     petEls.forEach((pet, i) => {
       pet.hasTarget = true;
-      pet.targetX = e.clientX + (i === 0 ? -35 : 35);
+      pet.targetX = e.clientX + (i === 0 ? -40 : 40);
       pet.targetY = e.clientY;
     });
   });
@@ -444,7 +444,7 @@
 
       const bob = Math.sin(Date.now() * 0.002 + pet.x * 0.01) * 5;
 
-      pet.el.style.transform = `translate(${pet.x - 30}px, ${pet.y - 30 + bob}px)`;
+      pet.el.style.transform = `translate(${pet.x - 40}px, ${pet.y - 40 + bob}px)`;
     });
 
     requestAnimationFrame(animatePets);
