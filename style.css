@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   Minimal Dark Tech Portfolio
-   Inspired by: Trae / Linear / Cursor
+   Portfolio — santifer.io inspired light theme
    ═══════════════════════════════════════════════════════ */
 
 /* ── 1. Reset & Custom Properties ─── */
@@ -13,37 +12,77 @@
 }
 
 :root {
-  --bg: #000000;
-  --bg-glass: rgba(255, 255, 255, 0.03);
-  --bg-glass-hover: rgba(255, 255, 255, 0.06);
-  --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(0, 229, 160, 0.2);
-  --text-primary: #f5f5f5;
-  --text-secondary: #a0a0a0;
-  --text-muted: #555;
-  --accent: #00e5a0;
-  --accent-dim: rgba(0, 229, 160, 0.1);
+  --bg: #f4f5f5;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fafafa;
+  --border: #e5e7eb;
+  --border-hover: #f97316;
+  --text-primary: #09090b;
+  --text-secondary: #52525b;
+  --text-muted: #a1a1aa;
+  --accent: #f97316;
+  --accent-hover: #ea580c;
+  --accent-dim: rgba(249, 115, 22, 0.08);
+  --accent-dim-border: rgba(249, 115, 22, 0.15);
+  --nav-bg: rgba(244, 245, 245, 0.8);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
   --nav-height: 56px;
-  --max-width: 1000px;
+  --max-width: 880px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Dark theme */
+[data-theme="dark"] {
+  --bg: #09090b;
+  --bg-card: #18181b;
+  --bg-card-hover: #1f1f23;
+  --border: #27272a;
+  --border-hover: #f97316;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --accent: #f97316;
+  --accent-hover: #fb923c;
+  --accent-dim: rgba(249, 115, 22, 0.1);
+  --accent-dim-border: rgba(249, 115, 22, 0.2);
+  --nav-bg: rgba(9, 9, 11, 0.8);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* ── 2. Base ─── */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Microsoft YaHei", sans-serif;
   background: var(--bg);
   color: var(--text-primary);
   line-height: 1.7;
   font-size: 15px;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.3s, color 0.3s;
 }
 
-/* ── 2. Top Navigation ─── */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+a:hover {
+  opacity: 0.75;
+}
+
+/* ── 3. Navigation ─── */
 .top-nav {
   position: fixed;
   top: 0;
@@ -54,32 +93,41 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  background: var(--nav-bg);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
   border-bottom: 1px solid var(--border);
   z-index: 1000;
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .nav-brand {
-  font-size: 1rem;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
-.nav-brand:hover {
-  color: var(--accent);
+.nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
 }
 
 .nav-links {
   display: flex;
-  gap: 2rem;
+  align-items: center;
+  gap: 1.75rem;
 }
 
 .nav-links a {
   color: var(--text-secondary);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   letter-spacing: 0.2px;
   transition: color 0.2s;
   position: relative;
@@ -96,520 +144,751 @@ body {
   bottom: -18px;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 1.5px;
   background: var(--accent);
+  border-radius: 1px;
 }
 
-/* ── 3. Layout ─── */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ── 4. Layout ─── */
 .content {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: calc(var(--nav-height) + 2rem) 2rem 4rem;
+  padding: calc(var(--nav-height) + 2.5rem) 2rem 4rem;
   position: relative;
   z-index: 2;
 }
 
 .section {
-  margin-bottom: 6rem;
+  margin-bottom: 5rem;
 }
 
-/* ── 4. Typography ─── */
+/* ── 5. Typography ─── */
 h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-size: 1.35rem;
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 2rem;
+  margin-bottom: 0.35rem;
   letter-spacing: -0.02em;
 }
 
+.section-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
 h3 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   letter-spacing: -0.01em;
 }
 
 p {
   color: var(--text-secondary);
-  font-size: 0.88rem;
-  line-height: 1.8;
+  font-size: 0.85rem;
+  line-height: 1.75;
 }
 
-a {
-  color: var(--accent);
-  text-decoration: none;
-  transition: opacity 0.2s;
-}
-
-a:hover {
-  opacity: 0.7;
-}
-
-/* ── 5. Hero ─── */
+/* ── 6. Hero ─── */
 .hero {
-  min-height: 90vh;
+  min-height: 70vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
+  padding-top: 2rem;
   position: relative;
 }
 
-.hero-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
+.hero-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1.25rem;
+  border: 3px solid var(--border);
 }
 
-.hero-title {
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-  position: relative;
-  z-index: 2;
-}
-
-.hero-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.5px;
-  margin-bottom: 4rem;
-  position: relative;
-  z-index: 2;
-}
-
-/* ── 6. Carousel ─── */
-.carousel {
-  position: relative;
-  width: 100%;
-  max-width: 800px;
-  z-index: 2;
-  overflow: hidden;
-}
-
-.carousel-track {
-  display: flex;
-  transition: transform 0.5s var(--ease);
-}
-
-.carousel-slide {
-  min-width: 100%;
-  padding: 2rem;
-  cursor: default;
-}
-
-.carousel-slide h3 {
-  font-size: 1.1rem;
+.hero-greeting {
+  font-size: 0.9rem;
+  color: var(--text-muted);
   margin-bottom: 0.5rem;
 }
 
-.carousel-slide p {
+.hero-name {
   font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 600;
   margin-bottom: 1rem;
 }
 
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  z-index: 3;
+.hero-title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  max-width: 600px;
 }
 
-.carousel-btn:hover {
-  border-color: var(--border-hover);
+.hero-title .accent {
   color: var(--accent);
-  background: var(--bg-glass-hover);
 }
 
-.carousel-btn.prev {
-  left: -20px;
+.hero-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  max-width: 520px;
+  line-height: 1.7;
+  margin-bottom: 2rem;
 }
 
-.carousel-btn.next {
-  right: -20px;
-}
-
-.carousel-dots {
+/* Metrics bar */
+.metrics-bar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
+  gap: 0.6rem;
+  margin-bottom: 2.5rem;
 }
 
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--text-muted);
+.metric-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-dim-border);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.metric-badge .metric-value {
+  font-weight: 700;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: all 0.2s;
   cursor: pointer;
-  transition: all 0.3s;
+  border: none;
+  font-family: inherit;
 }
 
-.dot.active {
+.btn-primary {
   background: var(--accent);
-  box-shadow: 0 0 8px rgba(0, 229, 160, 0.4);
-  width: 20px;
-  border-radius: 3px;
+  color: #fff;
 }
 
-/* ── 7. Glass Card ─── */
-.glass-card {
-  background: var(--bg-glass);
-  backdrop-filter: blur(16px) saturate(1.1);
-  -webkit-backdrop-filter: blur(16px) saturate(1.1);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  transition: transform 0.4s var(--ease), border-color 0.3s, box-shadow 0.4s;
-}
-
-.glass-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--border-hover);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-}
-
-/* ── 8. Principles ─── */
-.principles {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-  margin-bottom: 4rem;
-}
-
-.principle-card {
-  padding: 1.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.principle-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 229, 160, 0.15), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.principle-card:hover::before {
+.btn-primary:hover {
+  background: var(--accent-hover);
   opacity: 1;
 }
 
-.principle-icon {
-  font-size: 0.7rem;
-  color: var(--accent);
-  font-family: "SF Mono", "Fira Code", monospace;
-  margin-bottom: 1rem;
-  letter-spacing: 0.5px;
-}
-
-.principle-card h3 {
-  font-size: 0.95rem;
-  margin-bottom: 0.75rem;
-}
-
-.principle-card p {
-  font-size: 0.82rem;
-  line-height: 1.7;
-}
-
-/* ── 9. Knowledge Graph ─── */
-.graph-title {
-  margin-bottom: 1.5rem;
-}
-
-.graph-container {
-  width: 100%;
-  aspect-ratio: 2.5 / 1;
-  min-height: 300px;
-  border-radius: 12px;
-  overflow: hidden;
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-primary);
   border: 1px solid var(--border);
-  background: var(--bg-glass);
-  backdrop-filter: blur(8px);
 }
 
-.graph-container canvas {
-  width: 100%;
-  height: 100%;
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
 }
 
-/* ── 10. Timeline ─── */
-.timeline {
-  border-left: 1px solid rgba(0, 229, 160, 0.12);
-  padding-left: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+/* ── 7. Cards ─── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: transform 0.35s var(--ease), border-color 0.3s, box-shadow 0.35s;
 }
 
-.timeline-item {
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── 8. Skills Grid (Experience header) ─── */
+.skills-matrix {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.skill-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  transition: border-color 0.2s;
+}
+
+.skill-cell:hover {
+  border-color: var(--accent-dim-border);
+}
+
+.skill-cell-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.01em;
+}
+
+.skill-cell-desc {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* ── 9. Experience Cards ─── */
+.exp-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
   position: relative;
+  transition: border-color 0.3s, box-shadow 0.35s;
 }
 
-.timeline-item::before {
+.exp-card::before {
   content: "";
   position: absolute;
-  left: -1.9rem;
-  top: 0.4rem;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  left: 0;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  width: 3px;
   background: var(--accent);
-  box-shadow: 0 0 8px rgba(0, 229, 160, 0.3);
+  border-radius: 0 2px 2px 0;
 }
 
-.timeline-header {
+.exp-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.exp-header {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem 1rem;
   align-items: baseline;
-  margin-bottom: 0.2rem;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
 }
 
-.company {
-  font-weight: 600;
+.exp-company {
+  font-weight: 700;
+  font-size: 0.95rem;
   color: var(--text-primary);
-  font-size: 0.9rem;
 }
 
-.role {
+.exp-role {
   color: var(--accent);
   font-size: 0.82rem;
+  font-weight: 500;
 }
 
-.period {
+.exp-period {
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-family: "SF Mono", "Fira Code", monospace;
+  letter-spacing: 0.3px;
 }
 
-details {
-  margin-top: 0.5rem;
-}
-
-summary {
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  cursor: pointer;
-  list-style: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  transition: color 0.2s;
-}
-
-summary::before {
-  content: "›";
-  color: var(--accent);
-  transition: transform 0.25s var(--ease);
-  font-size: 0.9rem;
-}
-
-details[open] summary::before {
-  transform: rotate(90deg);
-}
-
-summary::marker {
-  display: none;
-}
-
-summary:hover {
-  color: var(--accent);
-}
-
-details[open] summary {
-  margin-bottom: 0.75rem;
-  display: inline-flex;
-}
-
-details p {
-  font-size: 0.85rem;
+.exp-desc {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
   margin-bottom: 0.75rem;
 }
 
-/* ── 11. Tags ─── */
-.tags {
+.exp-highlights {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
 }
 
-.tags span {
+/* ── 10. Project Grid ─── */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.35rem;
+  transition: transform 0.35s var(--ease), border-color 0.3s, box-shadow 0.35s;
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-lg);
+}
+
+.project-card h3 {
+  font-size: 0.92rem;
+  margin-bottom: 0.4rem;
+}
+
+.project-card > p {
+  font-size: 0.8rem;
+  margin-bottom: 0.85rem;
+  line-height: 1.65;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.project-tags span {
   font-size: 0.68rem;
-  padding: 0.2rem 0.55rem;
+  padding: 0.18rem 0.5rem;
   border-radius: 5px;
   background: var(--accent-dim);
   color: var(--accent);
   font-family: "SF Mono", "Fira Code", monospace;
   letter-spacing: 0.2px;
-  border: 1px solid rgba(0, 229, 160, 0.06);
+  border: 1px solid var(--accent-dim-border);
+  font-weight: 500;
 }
 
-/* ── 12. Project Grid ─── */
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
+.project-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
 }
 
-.project-card {
-  padding: 1.5rem;
+.project-metric {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: "SF Mono", "Fira Code", monospace;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-.project-card h3 {
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
+.project-metric::before {
+  content: "›";
+  color: var(--accent);
+  font-weight: 700;
 }
 
-.project-card p {
-  font-size: 0.84rem;
-  margin-bottom: 1rem;
-  line-height: 1.7;
+.project-status {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.project-status.live {
+  background: rgba(34, 197, 94, 0.08);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.project-status.oss {
+  background: rgba(99, 102, 241, 0.08);
+  color: #6366f1;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+[data-theme="dark"] .project-status.live {
+  background: rgba(34, 197, 94, 0.12);
+}
+
+[data-theme="dark"] .project-status.oss {
+  background: rgba(99, 102, 241, 0.12);
 }
 
 .project-links {
   display: flex;
-  gap: 1.2rem;
-  font-size: 0.8rem;
-}
-
-/* ── 13. Blog ─── */
-.blog-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.blog-item {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem 1.2rem;
-  align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  transition: padding 0.2s;
-}
-
-.blog-item:hover {
-  padding-left: 0.5rem;
-}
-
-.blog-item:first-child {
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.blog-date {
-  font-family: "SF Mono", "Fira Code", monospace;
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  min-width: 85px;
-  letter-spacing: 0.3px;
-}
-
-.blog-title {
-  flex: 1;
-  color: var(--text-primary);
-  font-size: 0.88rem;
+  gap: 1rem;
+  font-size: 0.78rem;
   font-weight: 500;
 }
 
-.blog-title:hover {
-  color: var(--accent);
+/* ── 11. Sharing / Social Cards ─── */
+.sharing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
 }
 
-.blog-tag {
-  font-size: 0.65rem;
-  padding: 0.12rem 0.45rem;
+.social-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  transition: border-color 0.3s, box-shadow 0.35s;
+}
+
+.social-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.social-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.social-icon {
+  width: 20px;
+  height: 20px;
   border-radius: 4px;
-  background: var(--accent-dim);
-  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.social-icon.x { background: #000; }
+.social-icon.wechat { background: #07c160; }
+.social-icon.github { background: #24292e; }
+
+.social-card-header .social-handle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.social-card-header .social-platform {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.social-card-body {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 0.75rem;
+}
+
+.social-card-footer {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
   font-family: "SF Mono", "Fira Code", monospace;
+}
+
+/* ── 12. Teaching ─── */
+.teaching-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  max-width: 600px;
+  transition: border-color 0.3s, box-shadow 0.35s;
+}
+
+.teaching-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.teaching-card h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.teaching-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.teaching-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* ── 13. Formation Timeline ─── */
+.formation-timeline {
+  border-left: 1px solid rgba(249, 115, 22, 0.15);
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formation-item {
+  position: relative;
+}
+
+.formation-item::before {
+  content: "";
+  position: absolute;
+  left: -1.65rem;
+  top: 0.35rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.formation-school {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.formation-detail {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.15rem;
+}
+
+.formation-period {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: "SF Mono", "Fira Code", monospace;
+  margin-top: 0.15rem;
   letter-spacing: 0.3px;
 }
 
-/* ── 14. Contact ─── */
+/* ── 14. Certifications ─── */
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+.cert-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  transition: border-color 0.2s;
+}
+
+.cert-item:hover {
+  border-color: var(--accent-dim-border);
+}
+
+.cert-year {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-family: "SF Mono", "Fira Code", monospace;
+  letter-spacing: 0.3px;
+  margin-bottom: 0.25rem;
+}
+
+.cert-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.cert-org {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+/* ── 15. Skills ─── */
+.skills-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.skill-group h3 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.skill-tags span {
+  font-size: 0.73rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.skill-tags span:hover {
+  border-color: var(--accent-dim-border);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ── 16. Contact ─── */
+.contact-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.contact-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.contact-card > p {
+  font-size: 0.84rem;
+  margin-bottom: 1.5rem;
+}
+
 .contact-email {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 600;
   font-family: "SF Mono", "Fira Code", monospace;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .contact-email a {
   color: var(--accent);
 }
 
-.contact .social-links {
-  flex-direction: row;
-  gap: 1.5rem;
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
 }
 
-/* ── 15. Footer ─── */
+/* ── 17. Footer ─── */
 footer {
   text-align: center;
   padding: 3rem 0 2rem;
   font-size: 0.72rem;
   color: var(--text-muted);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
-/* ── 16. Scroll Reveal ─── */
-.section {
+/* ── 18. Scroll Reveal ─── */
+/* Hero always visible */
+.hero {
+  opacity: 1;
+  transform: none;
+}
+
+.section:not(.hero) {
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
 }
 
-.section.visible {
+.section:not(.hero).visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* Stagger for child items */
-.timeline-item,
+/* Stagger children */
+.skills-matrix .skill-cell,
+.exp-card,
 .project-card,
-.blog-item,
-.principle-card {
+.social-card,
+.teaching-card,
+.formation-item,
+.cert-item,
+.skill-group {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  transform: translateY(18px);
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
   transition-delay: var(--stagger-delay, 0ms);
 }
 
-.timeline-item.stagger-in,
+.skills-matrix .skill-cell.stagger-in,
+.exp-card.stagger-in,
 .project-card.stagger-in,
-.blog-item.stagger-in,
-.principle-card.stagger-in {
+.social-card.stagger-in,
+.teaching-card.stagger-in,
+.formation-item.stagger-in,
+.cert-item.stagger-in,
+.skill-group.stagger-in {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* ── 17. Responsive ─── */
+/* ── 19. Responsive ─── */
 @media (max-width: 768px) {
   .top-nav {
     padding: 0 1.25rem;
@@ -620,7 +899,7 @@ footer {
   }
 
   .nav-links a {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
   }
 
   .content {
@@ -628,33 +907,54 @@ footer {
     padding-right: 1.25rem;
   }
 
-  .principles {
-    grid-template-columns: 1fr;
+  .skills-matrix {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .project-grid {
     grid-template-columns: 1fr;
   }
 
-  .carousel-btn.prev {
-    left: 5px;
+  .sharing-grid {
+    grid-template-columns: 1fr;
   }
 
-  .carousel-btn.next {
-    right: 5px;
+  .skills-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cert-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 480px) {
   .nav-links {
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
   .nav-links a {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
   }
 
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.4rem;
+  }
+
+  .metrics-bar {
+    gap: 0.4rem;
+  }
+
+  .metric-badge {
+    font-size: 0.7rem;
+    padding: 0.28rem 0.55rem;
+  }
+
+  .skills-container {
+    grid-template-columns: 1fr;
+  }
+
+  .cert-grid {
+    grid-template-columns: 1fr;
   }
 }

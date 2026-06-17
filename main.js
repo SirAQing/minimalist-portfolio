@@ -1,9 +1,32 @@
 (function () {
   "use strict";
 
-  // ── 1. Navigation scroll spy ───
-  const navLinks = document.querySelectorAll(".nav-links a");
-  const sections = document.querySelectorAll(".section, .hero");
+  // ── 1. Theme Toggle ───
+  const toggle = document.getElementById("themeToggle");
+  const root = document.documentElement;
+
+  const saved = localStorage.getItem("theme");
+  if (saved === "dark") {
+    root.setAttribute("data-theme", "dark");
+    toggle.textContent = "☀️";
+  }
+
+  toggle.addEventListener("click", () => {
+    const isDark = root.getAttribute("data-theme") === "dark";
+    if (isDark) {
+      root.removeAttribute("data-theme");
+      localStorage.setItem("theme", "light");
+      toggle.textContent = "🌙";
+    } else {
+      root.setAttribute("data-theme", "dark");
+      localStorage.setItem("theme", "dark");
+      toggle.textContent = "☀️";
+    }
+  });
+
+  // ── 2. Nav Scroll Spy ───
+  const navLinks = document.querySelectorAll(".nav-links a[href^='#']");
+  const sections = document.querySelectorAll(".section[id]");
 
   const spyObserver = new IntersectionObserver(
     (entries) => {
@@ -19,7 +42,7 @@
         }
       });
     },
-    { threshold: 0.3, rootMargin: "-60px 0px -40% 0px" }
+    { threshold: 0.2, rootMargin: "-60px 0px -35% 0px" }
   );
 
   sections.forEach((s) => spyObserver.observe(s));
@@ -32,371 +55,147 @@
     });
   });
 
-  // ── 2. Scroll reveal ───
+  // ── 3. Scroll Reveal ───
   const revealObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add("visible");
-          const items = entry.target.querySelectorAll(
-            ".timeline-item, .project-card, .blog-item, .principle-card"
-          );
-          items.forEach((item, i) => {
-            item.style.setProperty("--stagger-delay", `${i * 80}ms`);
-            item.classList.add("stagger-in");
+
+          const selectors = [
+            ".skill-cell", ".exp-card", ".project-card",
+            ".social-card", ".teaching-card", ".formation-item",
+            ".cert-item", ".skill-group",
+          ];
+
+          selectors.forEach((sel) => {
+            const items = entry.target.querySelectorAll(sel);
+            items.forEach((item, i) => {
+              item.style.setProperty("--stagger-delay", `${i * 70}ms`);
+              item.classList.add("stagger-in");
+            });
           });
         }
       });
     },
-    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
   );
 
-  document.querySelectorAll(".section, .hero").forEach((el) => revealObserver.observe(el));
-
-  // ── 3. Carousel ───
-  const track = document.querySelector(".carousel-track");
-  const slides = document.querySelectorAll(".carousel-slide");
-  const dots = document.querySelectorAll(".dot");
-  const prevBtn = document.querySelector(".carousel-btn.prev");
-  const nextBtn = document.querySelector(".carousel-btn.next");
-  let currentSlide = 0;
-  let autoplayTimer;
-
-  function goToSlide(index) {
-    currentSlide = (index + slides.length) % slides.length;
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
-    dots.forEach((d, i) => d.classList.toggle("active", i === currentSlide));
-  }
-
-  function startAutoplay() {
-    autoplayTimer = setInterval(() => goToSlide(currentSlide + 1), 5000);
-  }
-  function stopAutoplay() {
-    clearInterval(autoplayTimer);
-  }
-
-  prevBtn.addEventListener("click", () => { goToSlide(currentSlide - 1); stopAutoplay(); startAutoplay(); });
-  nextBtn.addEventListener("click", () => { goToSlide(currentSlide + 1); stopAutoplay(); startAutoplay(); });
-  dots.forEach((dot, i) => dot.addEventListener("click", () => { goToSlide(i); stopAutoplay(); startAutoplay(); }));
-
-  let touchStartX = 0;
-  track.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; stopAutoplay(); }, { passive: true });
-  track.addEventListener("touchend", (e) => {
-    const diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) goToSlide(currentSlide + (diff > 0 ? 1 : -1));
-    startAutoplay();
-  });
-  startAutoplay();
+  document.querySelectorAll(".section").forEach((el) => revealObserver.observe(el));
 
   // ── 4. Particle Network (Hero background) ───
   const canvas = document.getElementById("particles");
-  const ctx = canvas.getContext("2d");
-  let particles = [];
-  const PARTICLE_COUNT = 60;
-  const CONNECTION_DIST = 150;
-  // Click burst particles
-  let burstParticles = [];
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    const PARTICLE_COUNT = 50;
+    const CONNECTION_DIST = 140;
 
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
 
-  class Particle {
-    constructor() {
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
-      this.vx = (Math.random() - 0.5) * 0.3;
-      this.vy = (Math.random() - 0.5) * 0.3;
-      this.size = Math.random() * 1.5 + 0.5;
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.25;
+        this.vy = (Math.random() - 0.5) * 0.25;
+        this.size = Math.random() * 1.2 + 0.5;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(249, 115, 22, 0.3)";
+        ctx.fill();
+      }
     }
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-      if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0, 229, 160, 0.4)";
-      ctx.fill();
-    }
-  }
 
-  // Click burst particle
-  class BurstParticle {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 3 + 1.5;
-      this.vx = Math.cos(angle) * speed;
-      this.vy = Math.sin(angle) * speed;
-      this.life = 1;
-      this.decay = Math.random() * 0.02 + 0.015;
-      this.size = Math.random() * 2.5 + 1;
-      this.color = Math.random() > 0.5 ? "0, 229, 160" : "255, 255, 255";
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push(new Particle());
+      }
     }
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      this.vx *= 0.98;
-      this.vy *= 0.98;
-      this.life -= this.decay;
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${this.color}, ${this.life * 0.8})`;
-      ctx.fill();
-    }
-  }
 
-  function initParticles() {
-    particles = [];
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      particles.push(new Particle());
-    }
-  }
-
-  function drawConnections() {
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < CONNECTION_DIST) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(0, 229, 160, ${0.12 * (1 - dist / CONNECTION_DIST)})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
+    function drawConnections() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < CONNECTION_DIST) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(249, 115, 22, ${0.08 * (1 - dist / CONNECTION_DIST)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
         }
       }
     }
-  }
 
-  function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach((p) => { p.update(); p.draw(); });
-    drawConnections();
-
-    // Draw burst particles
-    burstParticles = burstParticles.filter((p) => p.life > 0);
-    burstParticles.forEach((p) => { p.update(); p.draw(); });
-
-    requestAnimationFrame(animateParticles);
-  }
-
-  resizeCanvas();
-  initParticles();
-  animateParticles();
-  window.addEventListener("resize", () => { resizeCanvas(); initParticles(); });
-
-  // Click burst effect
-  document.addEventListener("click", (e) => {
-    for (let i = 0; i < 18; i++) {
-      burstParticles.push(new BurstParticle(e.clientX, e.clientY));
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p) => { p.update(); p.draw(); });
+      drawConnections();
+      requestAnimationFrame(animateParticles);
     }
-  });
 
-  // ── 5. Knowledge Graph ───
-  const kgCanvas = document.getElementById("knowledge-graph");
-  const kgCtx = kgCanvas.getContext("2d");
-  let kgNodes = [];
-  let kgEdges = [];
-  let dragNode = null;
-  let hoveredNode = null;
-  let kgInitialized = false;
+    resizeCanvas();
+    initParticles();
+    animateParticles();
+    window.addEventListener("resize", () => { resizeCanvas(); initParticles(); });
+  }
 
-  const skills = [
-    { label: "React", group: 0 }, { label: "Vue.js", group: 0 },
-    { label: "TypeScript", group: 1 }, { label: "Rust", group: 2 },
-    { label: "Go", group: 2 }, { label: "Node.js", group: 2 },
-    { label: "Docker", group: 3 }, { label: "K8s", group: 3 },
-    { label: "PostgreSQL", group: 3 }, { label: "GraphQL", group: 1 },
-    { label: "WebSocket", group: 1 }, { label: "CRDT", group: 2 },
+  // ── 5. Console Easter Egg ───
+  const egg = [
+    "%c  ██████╗ ██╗   ██╗███████╗███████╗██████╗ ",
+    "%c ██╔═══██╗██║   ██║██╔════╝██╔════╝██╔══██╗",
+    "%c ██║   ██║██║   ██║█████╗  █████╗  ██████╔╝",
+    "%c ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══╝  ██╔══██╗",
+    "%c ╚██████╔╝ ╚████╔╝ ███████╗███████╗██║  ██║",
+    "%c  ╚═════╝   ╚═══╝  ╚══════╝╚══════╝╚═╝  ╚═╝",
   ];
-
-  const connections = [
-    [0, 4], [0, 10], [1, 4], [1, 10], [0, 2], [1, 2],
-    [2, 9], [2, 10], [3, 5], [3, 11], [4, 5], [5, 9],
-    [6, 8], [6, 7], [9, 10], [3, 6], [4, 8],
-  ];
-
-  const groupColors = ["#00e5a0", "#64b5f6", "#ffb74d", "#ef5350"];
-
-  function initKnowledgeGraph() {
-    const rect = kgCanvas.parentElement.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    kgCanvas.width = rect.width * dpr;
-    kgCanvas.height = rect.height * dpr;
-    kgCanvas.style.width = rect.width + "px";
-    kgCanvas.style.height = rect.height + "px";
-    kgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    const w = rect.width;
-    const h = rect.height;
-    const cx = w / 2;
-    const cy = h / 2;
-    const radius = Math.min(w, h) * 0.3;
-
-    kgNodes = skills.map((skill, i) => {
-      const angle = (i / skills.length) * Math.PI * 2 - Math.PI / 2;
-      return {
-        x: cx + Math.cos(angle) * radius + (Math.random() - 0.5) * 40,
-        y: cy + Math.sin(angle) * radius + (Math.random() - 0.5) * 40,
-        vx: 0, vy: 0,
-        label: skill.label, group: skill.group, radius: 18,
-      };
-    });
-
-    kgEdges = connections.map(([a, b]) => ({ source: a, target: b }));
-
-    for (let iter = 0; iter < 100; iter++) {
-      kgNodes.forEach((node) => { node.vx = 0; node.vy = 0; });
-      kgEdges.forEach((edge) => {
-        const a = kgNodes[edge.source];
-        const b = kgNodes[edge.target];
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const force = (dist - 120) * 0.01;
-        a.vx += (dx / dist) * force;
-        a.vy += (dy / dist) * force;
-        b.vx -= (dx / dist) * force;
-        b.vy -= (dy / dist) * force;
-      });
-      kgNodes.forEach((node) => {
-        node.vx += (cx - node.x) * 0.001;
-        node.vy += (cy - node.y) * 0.001;
-        node.x += node.vx;
-        node.y += node.vy;
-        node.x = Math.max(30, Math.min(w - 30, node.x));
-        node.y = Math.max(30, Math.min(h - 30, node.y));
-      });
-    }
-    kgInitialized = true;
-  }
-
-  function drawKnowledgeGraph() {
-    if (!kgInitialized) return;
-    const rect = kgCanvas.parentElement.getBoundingClientRect();
-    const w = rect.width;
-    const h = rect.height;
-    kgCtx.clearRect(0, 0, w, h);
-
-    kgEdges.forEach((edge) => {
-      const a = kgNodes[edge.source];
-      const b = kgNodes[edge.target];
-      const isHighlighted = hoveredNode !== null && (edge.source === hoveredNode || edge.target === hoveredNode);
-      kgCtx.beginPath();
-      kgCtx.moveTo(a.x, a.y);
-      kgCtx.lineTo(b.x, b.y);
-      kgCtx.strokeStyle = isHighlighted ? "rgba(0, 229, 160, 0.5)" : "rgba(255, 255, 255, 0.25)";
-      kgCtx.lineWidth = isHighlighted ? 1.2 : 0.5;
-      kgCtx.stroke();
-    });
-
-    kgNodes.forEach((node, i) => {
-      const isHovered = hoveredNode === i;
-      const r = isHovered ? node.radius + 3 : node.radius;
-      const color = groupColors[node.group];
-      kgCtx.beginPath();
-      kgCtx.arc(node.x, node.y, r + 6, 0, Math.PI * 2);
-      kgCtx.fillStyle = isHovered ? "rgba(0, 229, 160, 0.12)" : "transparent";
-      kgCtx.fill();
-      kgCtx.beginPath();
-      kgCtx.arc(node.x, node.y, r, 0, Math.PI * 2);
-      kgCtx.fillStyle = isHovered ? color : "rgba(20, 20, 20, 0.9)";
-      kgCtx.fill();
-      kgCtx.strokeStyle = color;
-      kgCtx.lineWidth = isHovered ? 2 : 1;
-      kgCtx.stroke();
-      kgCtx.fillStyle = isHovered ? "#fff" : "rgba(255, 255, 255, 0.7)";
-      kgCtx.font = `${isHovered ? "600" : "400"} 11px -apple-system, "PingFang SC", sans-serif`;
-      kgCtx.textAlign = "center";
-      kgCtx.fillText(node.label, node.x, node.y + r + 16);
-    });
-  }
-
-  function animateKnowledgeGraph() {
-    drawKnowledgeGraph();
-    requestAnimationFrame(animateKnowledgeGraph);
-  }
-
-  function getNodeAtPos(mx, my) {
-    for (let i = kgNodes.length - 1; i >= 0; i--) {
-      const n = kgNodes[i];
-      const dx = mx - n.x;
-      const dy = my - n.y;
-      if (dx * dx + dy * dy < (n.radius + 5) * (n.radius + 5)) return i;
-    }
-    return null;
-  }
-
-  kgCanvas.addEventListener("mousemove", (e) => {
-    const rect = kgCanvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
-    hoveredNode = getNodeAtPos(mx, my);
-    if (dragNode !== null) { kgNodes[dragNode].x = mx; kgNodes[dragNode].y = my; }
-    kgCanvas.style.cursor = hoveredNode !== null ? "pointer" : "default";
+  const colors = ["#f97316", "#ea580c", "#c2410c", "#9a3412", "#7c2d12", "#7c2d12"];
+  egg.forEach((line, i) => {
+    console.log(line, `color: ${colors[i]}; font-size: 14px; font-weight: bold; font-family: monospace;`);
   });
-
-  kgCanvas.addEventListener("mousedown", (e) => {
-    const rect = kgCanvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
-    dragNode = getNodeAtPos(mx, my);
-  });
-  kgCanvas.addEventListener("mouseup", () => { dragNode = null; });
-  kgCanvas.addEventListener("mouseleave", () => { hoveredNode = null; });
-
-  const kgObserver = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting && !kgInitialized) {
-        initKnowledgeGraph();
-        animateKnowledgeGraph();
-        kgObserver.disconnect();
-      }
-    },
-    { threshold: 0.1 }
+  console.log(
+    "%c🚀 数据应该驱动决策，代码应该让数据流动。 → hi@santifer.io",
+    "background: #f97316; color: #fff; font-size: 13px; font-weight: bold; padding: 6px 10px; border-radius: 4px;"
   );
-  kgObserver.observe(kgCanvas);
 
-  window.addEventListener("resize", () => { if (kgInitialized) initKnowledgeGraph(); });
-
-  // ── 6. Pet Characters (Claw + Sparky) ───
-  // Using actual pet images, wander freely, converge on click
-  // Slower, smoother movement
-
+  // ── 6. Pet Characters ───
   const petContainer = document.createElement("div");
   petContainer.id = "pet-container";
-  petContainer.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;overflow:hidden;";
+  petContainer.style.cssText =
+    "position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;overflow:hidden;";
   document.body.appendChild(petContainer);
 
   const petImages = [
-    { src: "assets/claude-code.png", size: 80 },
-    { src: "assets/codex.png", size: 80 },
+    { src: "assets/claude-code.png", size: 60 },
   ];
 
   const petEls = [];
 
-  petImages.forEach((info, i) => {
-    const img = new Image();
-    img.src = info.src;
-    img.onload = () => { petImagesLoaded++; };
-
+  petImages.forEach((info) => {
     const el = document.createElement("div");
     el.style.cssText = `position:absolute;width:${info.size}px;height:${info.size}px;transition:none;`;
-    const inner = document.createElement("img");
-    inner.src = info.src;
-    inner.style.cssText = "width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 8px rgba(255,255,255,0.1));";
-    inner.style.pointerEvents = "none";
-    el.appendChild(inner);
+    const img = document.createElement("img");
+    img.src = info.src;
+    img.style.cssText =
+      "width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 6px rgba(249,115,22,0.15));";
+    img.style.pointerEvents = "none";
+    el.appendChild(img);
     petContainer.appendChild(el);
 
     petEls.push({
@@ -414,7 +213,7 @@
   document.addEventListener("click", (e) => {
     petEls.forEach((pet, i) => {
       pet.hasTarget = true;
-      pet.targetX = e.clientX + (i === 0 ? -40 : 40);
+      pet.targetX = e.clientX + (i === 0 ? -50 : 50);
       pet.targetY = e.clientY;
     });
   });
@@ -431,24 +230,19 @@
           pet.vx = 0;
           pet.vy = 0;
         } else {
-          const springForce = 0.02;
-          const damping = 0.85;
-          pet.vx += dx * springForce;
-          pet.vy += dy * springForce;
-          pet.vx *= damping;
-          pet.vy *= damping;
+          pet.vx += dx * 0.015;
+          pet.vy += dy * 0.015;
+          pet.vx *= 0.88;
+          pet.vy *= 0.88;
           pet.x += pet.vx;
           pet.y += pet.vy;
         }
       }
 
-      const bob = Math.sin(Date.now() * 0.002 + pet.x * 0.01) * 5;
-
-      pet.el.style.transform = `translate(${pet.x - 40}px, ${pet.y - 40 + bob}px)`;
+      const bob = Math.sin(Date.now() * 0.0015 + pet.x * 0.01) * 4;
+      pet.el.style.transform = `translate(${pet.x - 30}px, ${pet.y - 30 + bob}px)`;
     });
-
     requestAnimationFrame(animatePets);
   }
   animatePets();
-
 })();

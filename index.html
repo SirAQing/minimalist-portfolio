@@ -3,211 +3,398 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>你的名字 | Portfolio</title>
+  <title>刘明青 | 数据工程师 · ETL 架构师</title>
+  <meta name="description" content="4年锂电储能行业ETL全链路经验，2项发明专利，AI辅助开发实践者。数据工程师 | ETL架构师 | AI赋能开发。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <canvas id="particles" class="hero-canvas"></canvas>
 
+  <!-- ── Navigation ─── -->
   <nav class="top-nav">
-    <a href="#" class="nav-brand">你的名字</a>
+    <a href="#hero" class="nav-brand">
+      <img src="assets/avatar-placeholder.svg" alt="刘明青" class="nav-avatar" onerror="this.style.display='none'" />
+      刘明青
+    </a>
     <div class="nav-links">
-      <a href="#about">关于</a>
       <a href="#experience">经历</a>
       <a href="#projects">项目</a>
-      <a href="#blog">博客</a>
+      <a href="#sharing">分享</a>
       <a href="#contact">联系</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="切换主题">🌙</button>
     </div>
   </nav>
 
   <main class="content">
-    <section id="hero" class="hero">
-      <h1 class="hero-title">技术应该隐形，<br>价值应该显性。</h1>
-      <p class="hero-subtitle">全栈开发者 / AI 产品实践者</p>
 
-      <div class="carousel">
-        <div class="carousel-track">
-          <div class="carousel-slide glass-card">
-            <h3>CLI 任务管理工具</h3>
-            <p>终端任务管理 CLI，看板视图 + Git 集成，200+ Stars</p>
-            <div class="tags"><span>Rust</span><span>CLI</span></div>
-          </div>
-          <div class="carousel-slide glass-card">
-            <h3>实时协作文档平台</h3>
-            <p>CRDT 驱动的多人协作文档，延迟 &lt;50ms</p>
-            <div class="tags"><span>React</span><span>Go</span><span>CRDT</span></div>
-          </div>
-          <div class="carousel-slide glass-card">
-            <h3>自动化部署平台</h3>
-            <p>可视化 CI/CD 编排，部署效率提升 3 倍</p>
-            <div class="tags"><span>Vue.js</span><span>Docker</span><span>K8s</span></div>
-          </div>
-        </div>
-        <button class="carousel-btn prev" aria-label="Previous">&#10094;</button>
-        <button class="carousel-btn next" aria-label="Next">&#10095;</button>
-        <div class="carousel-dots">
-          <span class="dot active"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-        </div>
+    <!-- ── Hero ─── -->
+    <section id="hero" class="section hero visible">
+      <img src="assets/avatar-placeholder.svg" alt="刘明青" class="hero-avatar" onerror="this.style.display='none'" />
+      <p class="hero-greeting">你好，我是</p>
+      <p class="hero-name">刘明青</p>
+      <h1 class="hero-title">
+        数据工程师<span class="accent"> | </span>ETL 架构师<span class="accent"> | </span>AI 辅助开发实践者
+      </h1>
+      <p class="hero-desc">
+        4 年锂电储能行业数据全链路经验，主导 <strong>10+ 套</strong> 数据系统落地，沉淀 <strong>2 项发明专利</strong>，为企业节省 <strong>5000+</strong> 人工工时。
+      </p>
+
+      <div class="metrics-bar">
+        <span class="metric-badge"><span class="metric-value">2</span> 项专利</span>
+        <span class="metric-badge"><span class="metric-value">50 GB</span> / 天</span>
+        <span class="metric-badge"><span class="metric-value">35×</span> 效率提升</span>
+        <span class="metric-badge"><span class="metric-value">5000+</span> 工时节省</span>
+      </div>
+
+      <div class="hero-actions">
+        <a href="#experience" class="btn btn-primary">查看经历 ↓</a>
+        <a href="#projects" class="btn btn-secondary">查看项目</a>
+        <a href="#contact" class="btn btn-secondary">联系我</a>
       </div>
     </section>
 
-    <section id="about" class="section">
-      <h2>关于我</h2>
-      <p class="about-text">你好，我是一名热爱技术的全栈开发者。专注于构建高性能、可扩展的 Web 应用，对前端工程化、系统设计和开源社区有浓厚兴趣。目前正在探索 AI 与 Web 技术的结合方向。</p>
-
-      <div class="principles">
-        <div class="principle-card glass-card">
-          <div class="principle-icon">01</div>
-          <h3>AI 是副驾驶</h3>
-          <p>不是自动驾驶。工具放大能力，但方向、判断和审美仍然由人决定。</p>
-        </div>
-        <div class="principle-card glass-card">
-          <div class="principle-icon">02</div>
-          <h3>体验优先于炫技</h3>
-          <p>每个技术决策都应该回答一个问题：这对用户真的有价值吗？</p>
-        </div>
-        <div class="principle-card glass-card">
-          <div class="principle-icon">03</div>
-          <h3>简单是终极复杂</h3>
-          <p>能用一个文件解决的问题，不用两个。能不用框架，就不用。</p>
-        </div>
-      </div>
-
-      <h2 class="graph-title">知识图谱</h2>
-      <div class="graph-container">
-        <canvas id="knowledge-graph"></canvas>
-      </div>
-    </section>
-
+    <!-- ── Experience ─── -->
     <section id="experience" class="section">
       <h2>工作经历</h2>
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="timeline-header">
-            <span class="company">某科技公司</span>
-            <span class="role">高级前端工程师</span>
-            <span class="period">2022 - 至今</span>
-          </div>
-          <details>
-            <summary>查看详情</summary>
-            <p>负责核心产品的前端架构设计，主导微前端迁移，将构建速度提升 60%。带领 5 人前端小组，建立代码规范和 CI/CD 流程。</p>
-            <div class="tags"><span>React</span><span>TypeScript</span><span>微前端</span><span>CI/CD</span></div>
-          </details>
+      <p class="section-subtitle">端到端的数据产品能力，从需求调研到架构设计、开发落地、运维迭代。</p>
+
+      <!-- Skills matrix -->
+      <div class="skills-matrix">
+        <div class="skill-cell">
+          <div class="skill-cell-title">ETL 架构设计</div>
+          <div class="skill-cell-desc">Kettle · DolphinScheduler · Kafka · 四层标准化架构</div>
         </div>
-        <div class="timeline-item">
-          <div class="timeline-header">
-            <span class="company">某创业公司</span>
-            <span class="role">全栈工程师</span>
-            <span class="period">2020 - 2022</span>
-          </div>
-          <details>
-            <summary>查看详情</summary>
-            <p>从零搭建产品的前后端架构，独立完成用户系统、支付模块和数据看板。产品上线后月活突破 10 万。</p>
-            <div class="tags"><span>Vue.js</span><span>Node.js</span><span>PostgreSQL</span><span>Docker</span></div>
-          </details>
+        <div class="skill-cell">
+          <div class="skill-cell-title">数据工程</div>
+          <div class="skill-cell-desc">Python/Pandas · Shell · Docker · SQL 建模</div>
         </div>
-        <div class="timeline-item">
-          <div class="timeline-header">
-            <span class="company">某互联网大厂</span>
-            <span class="role">前端开发工程师</span>
-            <span class="period">2018 - 2020</span>
-          </div>
-          <details>
-            <summary>查看详情</summary>
-            <p>参与电商平台前端开发，负责商品详情页和购物车模块的性能优化，LCP 从 3.2s 降至 1.1s。</p>
-            <div class="tags"><span>JavaScript</span><span>Webpack</span><span>性能优化</span></div>
-          </details>
+        <div class="skill-cell">
+          <div class="skill-cell-title">AI 赋能开发</div>
+          <div class="skill-cell-desc">Claude Code · Copilot/Codex，效率提升 35%</div>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cell-title">系统对接 & 运维</div>
+          <div class="skill-cell-desc">LIMS/LMS · Linux · 监控告警 · 自动化部署</div>
+        </div>
+      </div>
+
+      <!-- Experience card 1 -->
+      <div class="exp-card">
+        <div class="exp-header">
+          <span class="exp-company">江苏天合储能有限公司</span>
+          <span class="exp-role">软件程序设计师</span>
+          <span class="exp-period">2023.06 – 至今</span>
+        </div>
+        <p class="exp-desc">
+          主导锂电测试数据全链路治理体系，定制研发自动化数据处理工具与标准化 ETL 流程，推广至全部门落地。核心技术方案沉淀 2 项发明专利，ETL 平台任务执行成功率从 85% 提升至 99.9%。
+        </p>
+        <div class="exp-highlights">
+          <span class="metric-badge">ETL 调度平台</span>
+          <span class="metric-badge">安全报告自动化</span>
+          <span class="metric-badge">2 项专利</span>
+          <span class="metric-badge">20+ 人赋能</span>
+        </div>
+      </div>
+
+      <!-- Experience card 2 -->
+      <div class="exp-card">
+        <div class="exp-header">
+          <span class="exp-company">江苏天合储能有限公司</span>
+          <span class="exp-role">研发工程师助理</span>
+          <span class="exp-period">2022.06 – 2023.05</span>
+        </div>
+        <p class="exp-desc">
+          负责电芯热失控实验全流程数据处理，月均处理 500 组核心实验数据，数据清洗准确率 100%。建立产线数据跟踪机制，制程异常闭环率从 82% 提升至 98%，沉淀 12 项业务规则与统一计算口径。
+        </p>
+        <div class="exp-highlights">
+          <span class="metric-badge">500 组/月</span>
+          <span class="metric-badge">12 项规则</span>
+          <span class="metric-badge">98% 闭环率</span>
         </div>
       </div>
     </section>
 
+    <!-- ── Projects ─── -->
     <section id="projects" class="section">
-      <h2>精选项目</h2>
+      <h2>项目经历</h2>
+      <p class="section-subtitle">从数据采集到报表交付，全链路工程化落地。</p>
+
       <div class="project-grid">
-        <article class="project-card glass-card">
-          <h3>CLI 任务管理工具</h3>
-          <p>一款终端任务管理 CLI，支持看板视图、标签过滤和 Git 集成，已在 GitHub 获得 200+ Stars。</p>
-          <div class="tags"><span>Rust</span><span>CLI</span><span>TUIs</span></div>
+        <!-- Project 1 -->
+        <article class="project-card">
+          <span class="project-status live">生产环境</span>
+          <h3>ETL 数据集成与调度平台</h3>
+          <p>锂电测试数据全链路自动化平台，四层架构（CSV → 调度 → Kettle → MySQL），Docker Compose 一键部署，覆盖 6+ 类业务数据源。</p>
+          <div class="project-tags">
+            <span>Kettle</span><span>DolphinScheduler</span><span>MySQL</span><span>Docker</span><span>Python</span><span>Shell</span>
+          </div>
+          <div class="project-metrics">
+            <span class="project-metric">成功率 99.9%</span>
+            <span class="project-metric">50 GB/天</span>
+            <span class="project-metric">部署 4h→15min</span>
+            <span class="project-metric">复用率 +80%</span>
+          </div>
           <div class="project-links">
-            <a href="#" target="_blank" rel="noopener">源码</a>
-            <a href="#" target="_blank" rel="noopener">演示</a>
+            <a href="#" target="_blank" rel="noopener">查看详情 →</a>
           </div>
         </article>
-        <article class="project-card glass-card">
-          <h3>实时协作文档平台</h3>
-          <p>基于 CRDT 的实时协作文档编辑器，支持 Markdown 和多人同时编辑，延迟低于 50ms。</p>
-          <div class="tags"><span>React</span><span>Go</span><span>CRDT</span><span>WebSocket</span></div>
+
+        <!-- Project 2 -->
+        <article class="project-card">
+          <span class="project-status live">生产环境 · 专利</span>
+          <h3>电池循环测试报告自动化系统</h3>
+          <p>120+ 台设备数据自动处理，8 项核心指标计算，7 张趋势图表，二维码追溯体系，满足 CNAS 实验室审计要求。</p>
+          <div class="project-tags">
+            <span>VBA</span><span>Excel</span><span>ADO</span><span>MySQL</span>
+          </div>
+          <div class="project-metrics">
+            <span class="project-metric">报告 4-6h→8min (35×)</span>
+            <span class="project-metric">10万+ 电芯</span>
+            <span class="project-metric">1500h/年节省</span>
+          </div>
           <div class="project-links">
-            <a href="#" target="_blank" rel="noopener">源码</a>
-            <a href="#" target="_blank" rel="noopener">演示</a>
+            <a href="#" target="_blank" rel="noopener">查看详情 →</a>
           </div>
         </article>
-        <article class="project-card glass-card">
-          <h3>自动化部署平台</h3>
-          <p>可视化 CI/CD 配置工具，通过拖拽编排构建流程，支持多环境部署和回滚，团队部署效率提升 3 倍。</p>
-          <div class="tags"><span>Vue.js</span><span>Docker</span><span>Kubernetes</span></div>
+
+        <!-- Project 3 -->
+        <article class="project-card">
+          <span class="project-status live">生产环境</span>
+          <h3>安全报告自动化软件系统</h3>
+          <p>为热失控、过充、过放等 11 项安全测试量身开发报表工具，对接 LIMS 系统，实现多源数据高效自动化采集与整合。</p>
+          <div class="project-tags">
+            <span>VBA</span><span>Excel</span><span>LIMS</span>
+          </div>
+          <div class="project-metrics">
+            <span class="project-metric">效率 +80%</span>
+            <span class="project-metric">90%→97% 准确率</span>
+            <span class="project-metric">500+ 份/月</span>
+          </div>
           <div class="project-links">
-            <a href="#" target="_blank" rel="noopener">源码</a>
-            <a href="#" target="_blank" rel="noopener">演示</a>
+            <a href="#" target="_blank" rel="noopener">查看详情 →</a>
           </div>
         </article>
-        <article class="project-card glass-card">
-          <h3>开发者效率 Chrome 扩展</h3>
-          <p>集成 API 调试、JSON 格式化和 HTTP 请求记录的浏览器扩展，日活用户 3000+。</p>
-          <div class="tags"><span>TypeScript</span><span>Chrome API</span><span>Extension</span></div>
+
+        <!-- Project 4 -->
+        <article class="project-card">
+          <span class="project-status live">已完成</span>
+          <h3>储能热失控验证实验数据分析</h3>
+          <p>海量多维度数据清洗与标准化处理，5 种结构化分析模型，深度趋势研判识别关键风险点，输出精准技术建议。</p>
+          <div class="project-tags">
+            <span>Python</span><span>Pandas</span><span>NumPy</span><span>MySQL</span>
+          </div>
+          <div class="project-metrics">
+            <span class="project-metric">10万+ 条/月</span>
+            <span class="project-metric">20+ 份/月报表</span>
+            <span class="project-metric">92% 风险准确率</span>
+          </div>
           <div class="project-links">
-            <a href="#" target="_blank" rel="noopener">源码</a>
-            <a href="#" target="_blank" rel="noopener">演示</a>
+            <a href="#" target="_blank" rel="noopener">查看详情 →</a>
           </div>
         </article>
       </div>
     </section>
 
-    <section id="blog" class="section">
-      <h2>博客文章</h2>
-      <div class="blog-list">
-        <article class="blog-item">
-          <span class="blog-date">2026-06-10</span>
-          <a href="#" target="_blank" rel="noopener" class="blog-title">深入理解 React Server Components 的渲染模型</a>
-          <span class="blog-tag">React</span>
-        </article>
-        <article class="blog-item">
-          <span class="blog-date">2026-05-28</span>
-          <a href="#" target="_blank" rel="noopener" class="blog-title">用 Rust 重写 Node.js 工具链的实践与思考</a>
-          <span class="blog-tag">Rust</span>
-        </article>
-        <article class="blog-item">
-          <span class="blog-date">2026-05-12</span>
-          <a href="#" target="_blank" rel="noopener" class="blog-title">大型项目前端架构演进：从单体到微前端</a>
-          <span class="blog-tag">架构</span>
-        </article>
-        <article class="blog-item">
-          <span class="blog-date">2026-04-20</span>
-          <a href="#" target="_blank" rel="noopener" class="blog-title">TypeScript 5.x 类型体操：从入门到实战</a>
-          <span class="blog-tag">TypeScript</span>
-        </article>
-        <article class="blog-item">
-          <span class="blog-date">2026-03-15</span>
-          <a href="#" target="_blank" rel="noopener" class="blog-title">Docker 容器化部署最佳实践</a>
-          <span class="blog-tag">DevOps</span>
-        </article>
+    <!-- ── Sharing ─── -->
+    <section id="sharing" class="section">
+      <h2>技术分享</h2>
+      <p class="section-subtitle">在社区和社交平台分享数据工程实践与 AI 辅助开发经验。</p>
+
+      <div class="sharing-grid">
+        <div class="social-card">
+          <div class="social-card-header">
+            <div class="social-icon x">𝕏</div>
+            <span class="social-handle">@santifer</span>
+            <span class="social-platform">X (Twitter)</span>
+          </div>
+          <div class="social-card-body">
+            Built this to find my own job. Open sourced it. 12K+ stars in two days.
+          </div>
+          <div class="social-card-footer">
+            <span>♡ 111</span>
+            <span>↗ 533</span>
+          </div>
+        </div>
+
+        <div class="social-card">
+          <div class="social-card-header">
+            <div class="social-icon wechat">微</div>
+            <span class="social-handle">公众号 · 青储数据说</span>
+            <span class="social-platform">微信公众号</span>
+          </div>
+          <div class="social-card-body">
+            <em>（占位 — 后续填入公众号精选文章摘要）</em><br>
+            锂电数据处理深度实践 · ETL 架构设计 · AI 辅助开发技巧
+          </div>
+          <div class="social-card-footer">
+            <span>📝 更新中</span>
+          </div>
+        </div>
+
+        <div class="social-card">
+          <div class="social-card-header">
+            <div class="social-icon github">⌂</div>
+            <span class="social-handle">github.com/yourname</span>
+            <span class="social-platform">GitHub</span>
+          </div>
+          <div class="social-card-body">
+            <em>（占位 — 后续填入开源项目或工具脚本仓库）</em>
+          </div>
+          <div class="social-card-footer">
+            <span>⭐ 持续更新</span>
+          </div>
+        </div>
+
+        <div class="social-card">
+          <div class="social-card-header">
+            <div class="social-icon x">𝕏</div>
+            <span class="social-handle">数据工程日常</span>
+            <span class="social-platform">X (Twitter)</span>
+          </div>
+          <div class="social-card-body">
+            <em>（占位 — 后续填入 ETL 架构实践、效率工具技巧、行业观察等短内容）</em>
+          </div>
+          <div class="social-card-footer">
+            <span>📊 规划中</span>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- ── Teaching ─── -->
+    <section id="teaching" class="section">
+      <h2>团队赋能</h2>
+      <p class="section-subtitle">将实践经验沉淀为可复用的知识资产，赋能团队效率提升。</p>
+
+      <div class="teaching-card">
+        <h3>数据工程实践培训</h3>
+        <div class="teaching-meta">
+          <span>👥 20+ 名研发测试人员</span>
+          <span>📄 SOP 文档 + 实操培训</span>
+        </div>
+        <p>编写标准化开发文档与培训材料，梳理锂电核心指标计算规则与业务口径，大幅降低数据人工干预成本，实现团队口径统一。</p>
+      </div>
+    </section>
+
+    <!-- ── Formation ─── -->
+    <section id="formation" class="section">
+      <h2>教育经历</h2>
+
+      <div class="formation-timeline">
+        <div class="formation-item">
+          <div class="formation-school">常州信息职业技术学院</div>
+          <div class="formation-detail">光伏发电技术与应用 · 大专</div>
+          <div class="formation-period">2019 – 2022</div>
+          <p style="margin-top:0.3rem;font-size:0.8rem;">专业前 5%-10% · 2020 年度国家励志奖学金 · 校二等奖学金</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Certifications ─── -->
+    <section id="certifications" class="section">
+      <h2>认证</h2>
+      <p class="section-subtitle">持续学习，覆盖 AI 工具链与数据工程相关领域。</p>
+
+      <div class="cert-grid">
+        <div class="cert-item">
+          <div class="cert-year">2026</div>
+          <div class="cert-name">Building with the Claude API</div>
+          <div class="cert-org">Anthropic</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-year">2026</div>
+          <div class="cert-name">Advanced MCP Topics</div>
+          <div class="cert-org">Anthropic</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-year">2026</div>
+          <div class="cert-name">Claude Code in Action</div>
+          <div class="cert-org">Anthropic</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-year">2026</div>
+          <div class="cert-name">Introduction to Model Context Protocol</div>
+          <div class="cert-org">Anthropic</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-year">2026</div>
+          <div class="cert-name">AI Fluency: Framework & Foundations</div>
+          <div class="cert-org">Anthropic</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-year">2025</div>
+          <div class="cert-name">AI App Builder Certification</div>
+          <div class="cert-org">Airtable</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Skills ─── -->
+    <section id="skills" class="section">
+      <h2>技能栈</h2>
+      <p class="section-subtitle">数据工程全链路 + AI 工具赋能，端到端交付能力。</p>
+
+      <div class="skills-container">
+        <div class="skill-group">
+          <h3>ETL & 数据集成</h3>
+          <div class="skill-tags">
+            <span>Kettle</span><span>DolphinScheduler</span><span>Kafka</span><span>Zookeeper</span><span>Kafka Eagle</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>编程 & 分析</h3>
+          <div class="skill-tags">
+            <span>Python</span><span>Pandas</span><span>NumPy</span><span>VBA</span><span>Shell</span><span>SQL</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>数据库 & 运维</h3>
+          <div class="skill-tags">
+            <span>MySQL</span><span>Access</span><span>Docker Compose</span><span>Linux</span><span>CentOS</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>AI 工具</h3>
+          <div class="skill-tags">
+            <span>Claude Code</span><span>GitHub Copilot</span><span>Codex</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>系统对接</h3>
+          <div class="skill-tags">
+            <span>LIMS</span><span>LMS</span><span>ADO</span><span>二维码追溯</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>办公自动化</h3>
+          <div class="skill-tags">
+            <span>Excel</span><span>VBA 报表</span><span>标准化模板库</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Contact ─── -->
     <section id="contact" class="section">
-      <h2>联系我</h2>
-      <p class="contact-email"><a href="mailto:you@example.com">you@example.com</a></p>
-      <div class="social-links">
-        <a href="#" target="_blank" rel="noopener">GitHub</a>
-        <a href="#" target="_blank" rel="noopener">掘金</a>
-        <a href="mailto:you@example.com">Email</a>
+      <div class="contact-card">
+        <h2 style="text-align:center;margin-bottom:0.25rem;">联系我</h2>
+        <p>如果你也在做锂电数据化，或者对 ETL 架构 + AI 辅助开发感兴趣，欢迎交流。</p>
+        <div class="contact-email">
+          <a href="mailto:你的邮箱@example.com">你的邮箱@example.com</a>
+        </div>
+        <div class="contact-links">
+          <a href="#" class="btn btn-primary">发送邮件</a>
+          <a href="#" class="btn btn-secondary">GitHub</a>
+          <a href="#" class="btn btn-secondary">微信</a>
+        </div>
       </div>
     </section>
 
     <footer>
-      <p>HTML + CSS + JS · 无框架 · 零依赖</p>
+      <p>© 2026 刘明青 · 数据工程师 · ETL 架构师 · AI 辅助开发实践者</p>
     </footer>
   </main>
 
