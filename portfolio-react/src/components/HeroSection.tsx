@@ -1,0 +1,210 @@
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Star, GitFork, BookOpen, MessageSquare, Mail } from 'lucide-react';
+import { useI18n } from '../i18n';
+import avatarImg from '../assets/avatar.jpg';
+
+const AnimatedRoleText = ({ items }: { items: string[] }) => {
+  const [index, setIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const fullText = items[index];
+    if (!isDeleting) {
+      // Typing phase
+      if (displayedText.length < fullText.length) {
+        const timeout = setTimeout(() => {
+          setDisplayedText(fullText.slice(0, displayedText.length + 1));
+        }, 50);
+        return () => clearTimeout(timeout);
+      } else {
+        // Fully typed — hold for 1.5s then switch
+        const timeout = setTimeout(() => {
+          setIsDeleting(true);
+        }, 1500);
+        return () => clearTimeout(timeout);
+      }
+    } else {
+      // Quick fade out then switch to next item
+      const timeout = setTimeout(() => {
+        setIsDeleting(false);
+        setDisplayedText('');
+        setIndex((prev) => (prev + 1) % items.length);
+      }, 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [displayedText, index, isDeleting, items]);
+
+  return (
+    <span className="inline-block align-bottom min-w-[320px] md:min-w-[520px] text-left">
+      <motion.span
+        key={index + '-typing'}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isDeleting ? 0.3 : 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        {displayedText}
+      </motion.span>
+      <span className="animate-pulse text-blue-400 ml-0.5">|</span>
+    </span>
+  );
+};
+
+const RoleBadge = ({ label, active, stars, forks }: { label: string, active?: boolean, stars?: string, forks?: string }) => {
+  if (stars || forks) {
+    return (
+      <div className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs bg-bg-pill transition-colors hover:border-text-muted">
+        <span className="font-medium text-text-primary">{label}</span>
+        {(stars || forks) && (
+          <div className="flex items-center gap-1.5 border-l border-border pl-2 text-text-muted">
+            {stars && <span className="flex items-center gap-0.5"><Star size={10} className="text-star-color" /> {stars}</span>}
+            {forks && <span className="flex items-center gap-0.5"><GitFork size={10} /> {forks}</span>}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <span className={`inline-block px-3 py-1.5 text-xs rounded-full border ${active ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 font-medium' : 'border-border text-text-secondary'} bg-bg-pill transition-colors`}>
+      {label}
+    </span>
+  );
+};
+
+const NavCTA = ({ href, label, icon: Icon }: { href: string, label: string, icon?: any }) => {
+  return (
+    <a
+      href={href}
+      className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2 text-sm font-medium text-text-primary transition-all hover:border-text-muted hover:shadow-sm bg-bg-pill"
+    >
+      {Icon && <Icon size={14} className="text-text-muted" />}
+      {label}
+    </a>
+  );
+};
+
+const PrimaryCTA = ({ href, label, icon: Icon }: { href: string, label: string, icon?: any }) => {
+  return (
+    <a
+      href={href}
+      className="inline-flex items-center gap-2 rounded-full px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-500 transition-all hover:opacity-90 hover:shadow-md"
+    >
+      {Icon && <Icon size={14} />}
+      {label}
+    </a>
+  );
+};
+
+export const HeroSection = () => {
+  const { t } = useI18n();
+
+  return (
+    <section id="hero" className="pt-20 pb-12 md:pt-32 md:pb-16 flex flex-col items-center text-center relative z-10 min-h-[90vh] justify-center">
+      <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 w-full max-w-5xl">
+      
+      {/* Avatar */}
+      <div className="relative group shrink-0">
+        <div className="relative w-40 h-40 md:w-48 md:h-48">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 to-white/5 md:backdrop-blur-sm border border-white/20 shadow-2xl"></div>
+          <div className="absolute inset-1 rounded-full bg-gradient-to-br from-blue-200 to-purple-200 dark:from-blue-800 dark:to-purple-800 p-[2px]">
+            <div className="w-full h-full rounded-full overflow-hidden">
+              <img
+                src={avatarImg}
+                alt="刘明青"
+                className="w-full h-full object-cover bg-blue-900"
+              />
+            </div>
+          </div>
+        </div>
+        {/* Verification badge */}
+        <div className="absolute -bottom-1 -right-1 w-10 h-10 bg-blue-500 rounded-full border-2 border-bg-base z-20 flex items-center justify-center shadow-lg">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+            <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+      </div>
+
+      <div className="text-center md:text-left flex flex-col items-center md:items-start">
+        {/* Greeting */}
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-text-secondary text-lg">
+            {t('hero.greeting')}{" "}
+            <a href="#about" className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 font-semibold hover:opacity-80 transition-opacity">
+              @刘明青
+            </a>
+          </span>
+        </div>
+
+        {/* Main Title */}
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-accent mb-4 leading-tight">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">
+            {t('hero.title.1')}
+          </span>
+          <br />
+          <span className="text-text-primary">
+            <AnimatedRoleText items={[t('hero.title.2.1'), t('hero.title.2.2'), t('hero.title.2.3')]} />
+          </span>
+        </h1>
+
+        {/* Badges */}
+        <div className="flex flex-wrap justify-center md:justify-start gap-3 mb-12">
+          <RoleBadge label={t('hero.badge.builder')} />
+          <RoleBadge label={t('hero.badge.operator')} active />
+        </div>
+      </div>
+    </div>
+
+      <div className="text-center md:text-left flex flex-col items-center md:items-start mt-12 md:mt-16 w-full max-w-5xl">
+        {/* Patents */}
+        <div className="flex flex-col items-center md:items-start mb-16">
+          <span className="text-text-muted text-[10px] uppercase tracking-widest mb-3">{t('hero.press')}</span>
+          <div className="flex flex-wrap items-center gap-6">
+          <div className="px-4 py-2 rounded-lg border border-border bg-bg-pill text-xs text-text-secondary">
+            <span className="font-medium text-text-primary">CN119166678A</span>
+            <span className="text-text-muted ml-2">第一发明人</span>
+          </div>
+          <div className="px-4 py-2 rounded-lg border border-border bg-bg-pill text-xs text-text-secondary">
+            <span className="font-medium text-text-primary">CN120045414A</span>
+            <span className="text-text-muted ml-2">第三发明人</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bio / Description */}
+      <div className="max-w-2xl text-center md:text-left mb-12 space-y-6">
+        <div className="text-xl md:text-2xl font-medium text-accent">
+          <span className="text-blue-400">{t('hero.bio.1.1')}</span> {t('hero.bio.1.2')}<br/>
+          {t('hero.bio.1.3')}
+        </div>
+        
+        <div className="text-lg text-text-secondary">
+          {t('hero.bio.2.1')}<br/>
+          {t('hero.bio.2.2')} <span className="text-purple-400 font-medium">{t('hero.bio.2.3')}</span>
+        </div>
+
+        <p className="text-text-muted text-sm leading-relaxed max-w-xl mx-auto md:mx-0">
+          {t('hero.bio.3')}
+        </p>
+
+        <div className="pt-4">
+          <p className="text-accent text-lg font-medium mb-1">{t('hero.bio.4.1')}</p>
+          <p className="text-text-secondary mb-1">{t('hero.bio.4.2')}</p>
+          <p className="text-blue-500 font-medium">{t('hero.bio.4.3')}</p>
+        </div>
+      </div>
+
+      {/* CTA Buttons */}
+      <div className="flex flex-wrap justify-center md:justify-start gap-4 w-full">
+        <NavCTA href="#experience" label={t('hero.cta.path')} icon={BookOpen} />
+        <NavCTA href="#projects" label={t('hero.cta.projects')} icon={GitFork} />
+        <NavCTA href="#contact" label={t('hero.cta.talk')} icon={Mail} />
+        <PrimaryCTA href="#chat" label={t('hero.cta.ask')} icon={MessageSquare} />
+      </div>
+      </div>
+    </section>
+  );
+};

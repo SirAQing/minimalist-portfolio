@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-base: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f1f5f9;
+    --bg-pill: #ffffff;
+    --border: #e2e8f0;
+    --border-subtle: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --accent: #0f172a;
+    --link: #64748b;
+    --link-hover: #0f172a;
+    --tag-bg: #f1f5f9;
+    --tag-text: #64748b;
+    --star-color: #eab308;
+    --badge-green: #dcfce7;
+    --badge-green-t: #166534;
+    --badge-blue: #dbeafe;
+    --badge-blue-t: #1e40af;
+    
+    --dot-color: rgba(0, 0, 0, 0.05);
+    --glow-primary: rgba(147, 197, 253, 0.4);
+    --glow-secondary: rgba(233, 213, 255, 0.4);
+  }
+
+  :root.dark {
+    --bg-base: #0a0a0a;
+    --bg-card: #111111;
+    --bg-card-hover: #1a1a1a;
+    --bg-pill: #1c1c1c;
+    --border: #222222;
+    --border-subtle: #1a1a1a;
+    --text-primary: #f0f0f0;
+    --text-secondary: #888888;
+    --text-muted: #555555;
+    --accent: #e8e8e8;
+    --link: #a8a8a8;
+    --link-hover: #f0f0f0;
+    --tag-bg: #1e1e1e;
+    --tag-text: #aaaaaa;
+    --star-color: #f5c542;
+    --badge-green: #1a3a2a;
+    --badge-green-t: #4ade80;
+    --badge-blue: #1a2a3a;
+    --badge-blue-t: #60a5fa;
+
+    --dot-color: rgba(255, 255, 255, 0.05);
+    --glow-primary: rgba(56, 189, 248, 0.1);
+    --glow-secondary: rgba(168, 85, 247, 0.1);
+  }
+
+  body {
+    @apply bg-bg-base text-text-primary font-sans antialiased transition-colors duration-300;
+  }
+}
+
+.dot-bg {
+  background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.hero-glow-1 {
+  background: radial-gradient(circle, var(--glow-primary) 0%, transparent 70%);
+}
+
+.hero-glow-2 {
+  background: radial-gradient(circle, var(--glow-secondary) 0%, transparent 70%);
+}
