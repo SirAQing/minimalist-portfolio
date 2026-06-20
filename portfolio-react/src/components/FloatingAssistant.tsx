@@ -40,10 +40,25 @@ export const FloatingAssistant = () => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleOpenChat = () => setIsOpen(true);
+    window.addEventListener('open-chat', handleOpenChat);
+    return () => window.removeEventListener('open-chat', handleOpenChat);
+  }, []);
+
   const toggleChat = () => setIsOpen(!isOpen);
 
-  const handleSend = async () => {
-    const text = inputValue.trim();
+  const handleQuickAction = (text: string) => {
+    setInputValue(text);
+    // Use setTimeout to ensure state is updated before sending
+    setTimeout(() => {
+      // Create a synthetic event object or call logic directly
+      // Since handleSend uses inputValue from state, we need to pass text directly
+      handleSendDirect(text);
+    }, 0);
+  };
+
+  const handleSendDirect = async (text: string) => {
     if (!text || isSending) return;
 
     setInputValue('');
@@ -133,9 +148,7 @@ export const FloatingAssistant = () => {
     }
   };
 
-  const handleQuickAction = (text: string) => {
-    setInputValue(text);
-  };
+  const handleSend = () => handleSendDirect(inputValue.trim());
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, GitFork, BookOpen, MessageSquare, Mail } from 'lucide-react';
+import { Star, GitFork, BookOpen, MessageSquare } from 'lucide-react';
 import { useI18n } from '../i18n';
 import avatarImg from '../assets/avatar.jpg';
 
@@ -85,11 +85,17 @@ const NavCTA = ({ href, label, icon: Icon }: { href: string, label: string, icon
   );
 };
 
-const PrimaryCTA = ({ href, label, icon: Icon }: { href: string, label: string, icon?: any }) => {
+const PrimaryCTA = ({ href, label, icon: Icon, onClick }: { href?: string, label: string, icon?: any, onClick?: () => void }) => {
   return (
     <a
       href={href}
-      className="inline-flex items-center gap-2 rounded-full px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-500 transition-all hover:opacity-90 hover:shadow-md"
+      onClick={(e) => {
+        if (onClick) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      className="inline-flex items-center gap-2 rounded-full px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-500 transition-all hover:opacity-90 hover:shadow-md cursor-pointer"
     >
       {Icon && <Icon size={14} />}
       {label}
@@ -177,23 +183,7 @@ export const HeroSection = () => {
       {/* Bio / Description */}
       <div className="max-w-2xl text-center md:text-left mb-12 space-y-6">
         <div className="text-xl md:text-2xl font-medium text-accent">
-          <span className="text-blue-400">{t('hero.bio.1.1')}</span> {t('hero.bio.1.2')}<br/>
-          {t('hero.bio.1.3')}
-        </div>
-        
-        <div className="text-lg text-text-secondary">
-          {t('hero.bio.2.1')}<br/>
-          {t('hero.bio.2.2')} <span className="text-purple-400 font-medium">{t('hero.bio.2.3')}</span>
-        </div>
-
-        <p className="text-text-muted text-sm leading-relaxed max-w-xl mx-auto md:mx-0">
-          {t('hero.bio.3')}
-        </p>
-
-        <div className="pt-4">
-          <p className="text-accent text-lg font-medium mb-1">{t('hero.bio.4.1')}</p>
-          <p className="text-text-secondary mb-1">{t('hero.bio.4.2')}</p>
-          <p className="text-blue-500 font-medium">{t('hero.bio.4.3')}</p>
+          4 年锂电行业 · 10+ 数据系统 · 2 项发明专利
         </div>
       </div>
 
@@ -201,8 +191,11 @@ export const HeroSection = () => {
       <div className="flex flex-wrap justify-center md:justify-start gap-4 w-full">
         <NavCTA href="#experience" label={t('hero.cta.path')} icon={BookOpen} />
         <NavCTA href="#projects" label={t('hero.cta.projects')} icon={GitFork} />
-        <NavCTA href="#contact" label={t('hero.cta.talk')} icon={Mail} />
-        <PrimaryCTA href="#chat" label={t('hero.cta.ask')} icon={MessageSquare} />
+        <PrimaryCTA 
+          label={t('hero.cta.ask')} 
+          icon={MessageSquare} 
+          onClick={() => window.dispatchEvent(new CustomEvent('open-chat'))}
+        />
       </div>
       </div>
     </section>
