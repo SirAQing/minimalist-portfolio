@@ -1,17 +1,12 @@
-import { Star, GitFork, ExternalLink } from 'lucide-react';
+import { Star, GitFork, ExternalLink, Code2 } from 'lucide-react';
 import { useI18n } from '../i18n';
+import { SectionTitle } from './shared/SectionTitle';
 
 // const GithubIcon = ({ size = 16 }: { size?: number }) => (
 //   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
 //     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
 //   </svg>
 // );
-
-const SectionTitle = ({ title }: { title: string }) => (
-  <div className="mb-12">
-    <h2 className="text-3xl font-bold text-accent tracking-tight mb-3">{title}</h2>
-  </div>
-);
 
 const StatusBadge = ({ status }: { status: string }) => {
   let colorClass = "bg-white/5 text-text-secondary";
@@ -124,7 +119,10 @@ export const ProjectsSection = () => {
 
   return (
     <section id="projects" className="py-24">
-      <SectionTitle title={t('proj.title')} />
+      <SectionTitle 
+        icon={<Code2 size={20} className="text-blue-500" />}
+        title={t('proj.title')} 
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
         {PROJECTS.map(p => <ProjectCard key={p.title} {...p} />)}

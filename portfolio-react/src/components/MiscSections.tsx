@@ -1,11 +1,6 @@
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, GraduationCap, Award, Wrench } from 'lucide-react';
 import { useI18n } from '../i18n';
-
-const SectionTitle = ({ title }: { title: string }) => (
-  <div className="mb-12">
-    <h2 className="text-3xl font-bold text-accent tracking-tight mb-3">{title}</h2>
-  </div>
-);
+import { SectionTitle } from './shared/SectionTitle';
 
 const EduCard = ({ year, org, degree, note, link, testimonial }: { year: string, org: string, degree: string, note?: string, link?: string, testimonial?: { text: string, name: string, role: string } }) => (
   <div className="flex gap-4 group mb-6">
@@ -35,7 +30,10 @@ export const EducationSection = () => {
   const { t } = useI18n();
   return (
   <section className="py-24">
-    <SectionTitle title={t('edu.title')} />
+    <SectionTitle 
+      icon={<GraduationCap size={20} className="text-blue-500" />}
+      title={t('edu.title')} 
+    />
     <div className="space-y-2">
       <EduCard year="2019-2022" org="常州信息职业技术学院" degree={t('edu.1.degree')} note={t('edu.1.note')} />
     </div>
@@ -51,7 +49,10 @@ export const CertificationsSection = () => {
   const { t } = useI18n();
   return (
   <section className="py-24">
-    <SectionTitle title={t('cert.title')} />
+    <SectionTitle 
+      icon={<Award size={20} className="text-blue-500" />}
+      title={t('cert.title')} 
+    />
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       {PATENTS.map(patent => (
         <div key={patent.name} className="flex justify-between items-center bg-bg-card border border-border rounded-xl px-5 py-4 hover:bg-bg-card-hover hover:border-white/20 transition-all group">
@@ -83,7 +84,10 @@ export const SkillsSection = () => {
   const { t } = useI18n();
   return (
   <section className="py-24">
-    <SectionTitle title={t('skills.title')} />
+    <SectionTitle 
+      icon={<Wrench size={20} className="text-blue-500" />}
+      title={t('skills.title')} 
+    />
     
     <div className="mb-12">
       <h3 className="text-lg font-semibold text-accent mb-6">{t('skills.lang')}</h3>

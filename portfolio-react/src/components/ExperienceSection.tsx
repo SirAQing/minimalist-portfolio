@@ -1,18 +1,6 @@
 import { Briefcase, Zap } from 'lucide-react';
 import { useI18n } from '../i18n';
-
-const SectionTitle = ({ title, subtitle, number }: { title: string, subtitle?: string, number?: string }) => (
-  <div className="mb-12 flex items-start gap-4">
-    <div className="w-10 h-10 rounded-xl bg-bg-card border border-border flex items-center justify-center shrink-0 shadow-sm">
-      <Briefcase size={20} className="text-blue-500" />
-    </div>
-    <div>
-      {number && <span className="text-xs text-text-muted font-mono tracking-wider mb-2 block">{number}</span>}
-      <h2 className="text-2xl font-bold text-accent tracking-tight mb-3">{title}</h2>
-      {subtitle && <p className="text-text-secondary max-w-2xl text-sm leading-relaxed">{subtitle}</p>}
-    </div>
-  </div>
-);
+import { SectionTitle } from './shared/SectionTitle';
 
 const SkillTag = ({ label, desc }: { label: string, desc?: string }) => (
   <div className="flex flex-col p-4 rounded-xl border border-border bg-bg-card hover:border-text-muted transition-colors w-[calc(50%-0.5rem)] md:w-[calc(33.33%-0.5rem)] flex-grow">
@@ -79,7 +67,7 @@ export const ExperienceSection = () => {
   return (
     <section id="experience" className="py-24">
       <SectionTitle
-        number=""
+        icon={<Briefcase size={20} className="text-blue-500" />}
         title={t('exp.title')}
         subtitle={t('exp.subtitle')}
       />
