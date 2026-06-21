@@ -8,11 +8,12 @@ import time
 import uuid
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
-from fastapi.responses import StreamingResponse, Response
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from config import URGENT_KEYWORDS, SUMMARY_SCHEDULE_HOURS
+from config import URGENT_KEYWORDS, SUMMARY_SCHEDULE_HOURS, CORS_ORIGINS
 from models import (
     init_db, create_conversation, get_conversation,
     add_message, get_conversation_messages, mark_urgent
@@ -69,24 +70,15 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Hermes Chat API", version="1.0.0", lifespan=lifespan)
 
-
-# Custom CORS middleware — always allow all origins
-@app.middleware("http")
-async def add_cors_headers(request: Request, call_next):
-    # Handle CORS preflight
-    if request.method == "OPTIONS":
-        return Response(
-            status_code=200,
-            headers={
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Max-Age": "86400",
-            },
-        )
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=86400,
+)
 
 
 # ── Request/Response Models ──
@@ -104,6 +96,10 @@ class ChatResponse(BaseModel):
 
 
 # ── API Endpoints ──
+
+@app.get("/")
+async def root():
+    return {"status": "ok", "service": "hermes", "message": "Hermes Chat API is running"}
 
 @app.get("/api/health")
 async def health():

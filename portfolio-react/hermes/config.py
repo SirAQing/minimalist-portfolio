@@ -28,9 +28,15 @@ URGENT_KEYWORDS = os.getenv("URGENT_KEYWORDS", "人工,联系本人,真人,urgen
 # Database
 DATABASE_PATH = os.getenv("DATABASE_PATH", "hermes.db")
 
-# CORS — defaults to "*" (allow all). Set to comma-separated origins to restrict.
-_CORS_RAW = os.getenv("CORS_ORIGINS", "*")
-CORS_ORIGINS = ["*"] if _CORS_RAW.strip() == "*" else [o.strip() for o in _CORS_RAW.split(",") if o.strip()]
+# CORS — Hermes is a public portfolio assistant and should work across deployment domains.
+# Restrictive allow-lists are opt-in via CORS_ALLOW_ALL=false.
+CORS_ALLOW_ALL = os.getenv("CORS_ALLOW_ALL", "true").lower() == "true"
+_CORS_RAW = os.getenv("CORS_ORIGINS", "")
+CORS_ORIGINS = (
+    ["*"]
+    if CORS_ALLOW_ALL or not _CORS_RAW.strip()
+    else [o.strip() for o in _CORS_RAW.split(",") if o.strip()]
+)
 
 # System prompt for the AI agent
 SYSTEM_PROMPT = os.getenv("SYSTEM_PROMPT", """你是刘明青的AI助理 Hermes，正在他的个人作品集网站（liumingqing.com）上为访客提供帮助。
