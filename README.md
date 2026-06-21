@@ -4,6 +4,8 @@ A modern, bilingual portfolio website with a floating AI chat assistant, knowled
 
 **Live**: [liumingqing.com](https://liumingqing.com) &ensp;|&ensp; **Open Source**: [GitHub](https://github.com/SirAQing/minimalist-portfolio)
 
+![image-20260621210958851](C:\Users\大青\AppData\Roaming\Typora\typora-user-images\image-20260621210958851.png)
+
 ---
 
 ## Architecture
@@ -28,7 +30,7 @@ graph TD
     end
 
     subgraph Backend["Backend (FastAPI + SQLite)"]
-        API[/api/chat/stream SSE]
+        API["/api/chat/stream (SSE)"]
         LLM[DeepSeek API]
         DB[(hermes.db)]
         NOTIFY[Feishu / WeChat Push]
