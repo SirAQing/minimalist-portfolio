@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Star, GitFork, ExternalLink, Code2 } from 'lucide-react';
 import { useI18n } from '../i18n';
 import { SectionTitle } from './shared/SectionTitle';
+import { ProjectModal } from './ProjectModal';
 
 // const GithubIcon = ({ size = 16 }: { size?: number }) => (
 //   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -9,11 +11,13 @@ import { SectionTitle } from './shared/SectionTitle';
 // );
 
 const StatusBadge = ({ status }: { status: string }) => {
-  let colorClass = "bg-white/5 text-text-secondary";
-  if (status === "Open Source" || status === "开源" || status === "Personal Project" || status === "个人项目") colorClass = "bg-badge-green text-badge-green-t";
-  if (status === "En producción" || status === "In Production" || status === "生产环境") colorClass = "bg-badge-blue text-badge-blue-t";
-  if (status === "Este Portfolio" || status === "This Portfolio" || status === "本作品集") colorClass = "bg-purple-900/30 text-purple-400";
-  if (status === "Enterprise" || status === "企业项目") colorClass = "bg-orange-900/30 text-orange-400";
+  const lower = status.toLowerCase();
+  let colorClass = 'bg-white/5 text-text-secondary';
+  if (lower.includes('enterprise') || lower.includes('企业')) colorClass = 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20';
+  else if (lower.includes('production') || lower.includes('生产')) colorClass = 'bg-badge-blue text-badge-blue-t';
+  else if (lower.includes('personal') || lower.includes('个人')) colorClass = 'bg-badge-green text-badge-green-t';
+  else if (lower.includes('open source') || lower.includes('开源')) colorClass = 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20';
+  else if (lower.includes('live') || lower.includes('上线')) colorClass = 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20';
 
   return (
     <span className={`px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-full font-medium ${colorClass} mb-3 inline-block`}>
@@ -23,6 +27,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 interface ProjectCardProps {
+  detailKey: string;
   title: string;
   status: string;
   description: string;
@@ -30,18 +35,23 @@ interface ProjectCardProps {
   stars?: string;
   forks?: string;
   link?: string;
+  kbSlugs?: { slug: string; label: string }[];
+  onOpen: () => void;
 }
 
-const ProjectCard = ({ title, status, description, tags, stars, forks, link }: ProjectCardProps) => {
+const ProjectCard = ({ title, status, description, tags, stars, forks, link, onOpen }: ProjectCardProps) => {
   return (
-    <div className="bg-bg-card border border-border rounded-xl p-6 hover:bg-bg-card-hover transition-colors flex flex-col h-full group">
+    <div
+      onClick={onOpen}
+      className="bg-bg-card border border-border rounded-xl p-6 hover:bg-bg-card-hover hover:border-blue-500/20 transition-all flex flex-col h-full group cursor-pointer"
+    >
       <StatusBadge status={status} />
       <h3 className="text-lg font-semibold text-accent mb-2 flex items-center gap-2">
         {title}
         {link && <ExternalLink size={14} className="text-text-muted group-hover:text-text-primary transition-colors" />}
       </h3>
       <p className="text-sm text-text-secondary mb-4 flex-grow">{description}</p>
-      
+
       <div className="flex flex-wrap gap-1.5 mb-5">
         {tags.map(tag => (
           <span key={tag} className="px-2 py-0.5 text-xs rounded-md bg-tag-bg text-tag-text font-mono">
@@ -56,7 +66,7 @@ const ProjectCard = ({ title, status, description, tags, stars, forks, link }: P
             {stars && <span className="flex items-center gap-1"><Star size={12} className="text-star-color" /> {stars}</span>}
             {forks && <span className="flex items-center gap-1"><GitFork size={12} /> {forks}</span>}
           </div>
-          {link && <a href={`https://${link}`} target="_blank" rel="noreferrer" className="hover:text-text-primary transition-colors">{link}</a>}
+          {link && <span className="hover:text-text-primary transition-colors">{link}</span>}
         </div>
       )}
     </div>
@@ -90,43 +100,91 @@ const ProjectCard = ({ title, status, description, tags, stars, forks, link }: P
 
 export const ProjectsSection = () => {
   const { t } = useI18n();
+  const [modal, setModal] = useState<ProjectCardProps | null>(null);
+
   const PROJECTS: ProjectCardProps[] = [
     {
-      title: "ETL Data Integration & Scheduling Platform",
-      status: t('proj.status.production'),
-      description: "Fully automated ETL pipeline for lithium battery testing data — from raw CSV to structured MySQL storage. 4-layer architecture with DolphinScheduler scheduling, Kettle transformation, and Docker Compose deployment.",
+      detailKey: 'etl',
+      title: t('proj.etl.title'),
+      status: t('proj.status.enterprise'),
+      description: t('proj.etl.desc'),
       tags: ["Kettle", "DolphinScheduler", "MySQL", "Docker Compose", "Python", "Shell"],
+      onOpen: () => {},
     },
     {
-      title: "Battery Cycle Test Report Automation",
-      status: t('proj.status.production'),
-      description: "End-to-end automated report generation for 5000+ test channels. Reduced batch report time from 4-6 hours to 8 minutes (35x speedup). Patented core algorithm.",
-      tags: ["VBA", "Excel", "ADO", "MySQL"],
+      detailKey: 'report',
+      title: t('proj.report.title'),
+      status: t('proj.status.enterprise'),
+      description: t('proj.report.desc'),
+      tags: ["VBA", "Excel", "ADO", "MySQL", "Data Pipeline"],
+      onOpen: () => {},
     },
     {
-      title: "Private LLM & Dify AI Platform",
-      status: t('proj.status.production'),
-      description: "Enterprise-grade local LLM deployment with Dify application platform. Includes RAG knowledge base, Chatflow, and Workflow for lithium testing standards query, customer needs analysis, and internal knowledge retrieval.",
+      detailKey: 'llm',
+      title: t('proj.llm.title'),
+      status: t('proj.status.enterprise'),
+      description: t('proj.llm.desc'),
       tags: ["Ollama", "Dify", "RAG", "Docker", "Linux", "Chatflow"],
+      kbSlugs: [
+        { slug: 'linux-deploy-ollama', label: 'Ollama 部署方案' },
+        { slug: 'linux-deploy-dify-ollama', label: 'Dify 部署方案' },
+      ],
+      onOpen: () => {},
     },
     {
-      title: "NL2SQL Agent Platform",
+      detailKey: 'nl2sql',
+      title: t('proj.nl2sql.title'),
+      status: t('proj.status.personal'),
+      description: t('proj.nl2sql.desc'),
+      tags: ["FastAPI", "LangGraph", "ChromaDB", "Gradio", "Docker", "HuggingFace"],
+      link: "gitee.com/da-qing-oh/nl2-sql-agent",
+      onOpen: () => {},
+    },
+    {
+      detailKey: 'portfolio',
+      title: t('proj.portfolio.title'),
+      status: t('proj.status.live'),
+      description: t('proj.portfolio.desc'),
+      tags: ["React", "TypeScript", "Vite", "Tailwind CSS", "FastAPI", "SQLite", "SSE"],
+      link: "github.com/SirAQing/minimalist-portfolio",
+      onOpen: () => {},
+    },
+    {
+      detailKey: 'wechat',
+      title: t('proj.wechat.title'),
       status: t('proj.status.opensource'),
-      description: "AI-driven natural language to SQL query platform with LangGraph state machine workflow, RAG schema retrieval, and multi-layer security. Built with VibeCoding approach using Claude Code & Codex.",
-      tags: ["FastAPI", "LangGraph", "ChromaDB", "Gradio", "Docker"],
-    }
+      description: t('proj.wechat.desc'),
+      tags: ["JavaScript", "Chrome Extension", "Manifest V3", "DOM Injection", "Markdown"],
+      link: "github.com/SirAQing/wechat-formatter",
+      onOpen: () => {},
+    },
   ];
 
   return (
     <section id="projects" className="py-24">
-      <SectionTitle 
+      <SectionTitle
         icon={<Code2 size={20} className="text-blue-500" />}
-        title={t('proj.title')} 
+        title={t('proj.title')}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-        {PROJECTS.map(p => <ProjectCard key={p.title} {...p} />)}
+        {PROJECTS.map(p => (
+          <ProjectCard key={p.detailKey} {...p} onOpen={() => setModal(p)} />
+        ))}
       </div>
+
+      {modal && (
+        <ProjectModal
+          open={!!modal}
+          onClose={() => setModal(null)}
+          detailKey={modal.detailKey}
+          title={modal.title}
+          status={modal.status}
+          tags={modal.tags}
+          link={modal.link}
+          kbSlugs={modal.kbSlugs}
+        />
+      )}
     </section>
   );
 };

@@ -13,6 +13,7 @@ export default {
         'bg-card': 'var(--bg-card)',
         'bg-card-hover': 'var(--bg-card-hover)',
         'bg-pill': 'var(--bg-pill)',
+        'bg-section-alt': 'var(--bg-section-alt)',
         'border': 'var(--border)',
         'border-subtle': 'var(--border-subtle)',
         'text-primary': 'var(--text-primary)',

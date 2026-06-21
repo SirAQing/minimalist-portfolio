@@ -24,7 +24,7 @@ export const FloatingAssistant = () => {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      setMessages([{ role: 'ai', content: t('chat.welcome') || (lang === 'zh' ? '你好！我是刘明青的 AI 助理 Hermes。有什么可以帮你的？' : 'Hi! I\'m Hermes, Liu\'s AI assistant. How can I help you?') }]);
+      setMessages([{ role: 'ai', content: t('chat.welcome') }]);
     }
   }, [isOpen, messages.length, t, lang]);
 
@@ -135,9 +135,7 @@ export const FloatingAssistant = () => {
         return updated;
       });
     } catch {
-      const errorMsg = lang === 'zh'
-        ? '抱歉，网络连接出错了。请稍后再试。'
-        : 'Sorry, connection error. Please try again later.';
+      const errorMsg = t('chat.error.network');
       setMessages(prev => {
         const updated = [...prev];
         updated[aiMsgIndex] = { role: 'ai', content: errorMsg, streaming: false };
@@ -170,7 +168,7 @@ export const FloatingAssistant = () => {
                   <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white dark:border-bg-card"></div>
                 </div>
                 <div>
-                  <div className="font-semibold text-text-primary text-sm">刘明青</div>
+                  <div className="font-semibold text-text-primary text-sm">{t('chat.name')}</div>
                   <div className="text-xs text-text-secondary">{t('chat.subtitle') || 'Ask me about my experience'}</div>
                 </div>
               </div>
@@ -202,17 +200,17 @@ export const FloatingAssistant = () => {
               {/* Quick Actions (only show if it's the beginning) */}
               {messages.length === 1 && (
                 <div className="flex flex-wrap gap-2 mt-4">
-                  <button onClick={() => handleQuickAction('Experience with AI')} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full border border-teal-500/30 bg-teal-500/5 text-teal-600 dark:text-teal-400 hover:bg-teal-500/10 transition-colors">
-                    <Briefcase size={12} /> Experience with AI
+                  <button onClick={() => handleQuickAction(t('chat.action.exp'))} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full border border-teal-500/30 bg-teal-500/5 text-teal-600 dark:text-teal-400 hover:bg-teal-500/10 transition-colors">
+                    <Briefcase size={12} /> {t('chat.action.exp')}
                   </button>
-                  <button onClick={() => handleQuickAction('Featured projects')} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full border border-blue-500/30 bg-blue-500/5 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 transition-colors">
-                    <GitFork size={12} /> Featured projects
+                  <button onClick={() => handleQuickAction(t('chat.action.projects'))} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full border border-blue-500/30 bg-blue-500/5 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 transition-colors">
+                    <GitFork size={12} /> {t('chat.action.projects')}
                   </button>
-                  <button onClick={() => handleQuickAction('Why hire you?')} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full border border-purple-500/30 bg-purple-500/5 text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 transition-colors">
-                    <HelpCircle size={12} /> Why hire you?
+                  <button onClick={() => handleQuickAction(t('chat.action.why'))} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full border border-purple-500/30 bg-purple-500/5 text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 transition-colors">
+                    <HelpCircle size={12} /> {t('chat.action.why')}
                   </button>
-                  <button onClick={() => handleQuickAction('Contact')} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-600 dark:text-orange-400 hover:bg-orange-500/10 transition-colors">
-                    <Mail size={12} /> Contact
+                  <button onClick={() => handleQuickAction(t('chat.action.contact'))} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-600 dark:text-orange-400 hover:bg-orange-500/10 transition-colors">
+                    <Mail size={12} /> {t('chat.action.contact')}
                   </button>
                 </div>
               )}
@@ -224,7 +222,7 @@ export const FloatingAssistant = () => {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder={t('chat.placeholder') || (lang === 'zh' ? '输入消息...' : 'Type your question...')}
+                  placeholder={t('chat.placeholder')}
                   className="flex-1 bg-transparent border-none outline-none text-sm text-text-primary placeholder:text-text-muted"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}

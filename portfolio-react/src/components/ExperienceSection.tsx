@@ -1,11 +1,13 @@
-import { Briefcase, Zap } from 'lucide-react';
+import { Briefcase, Code, Brain, Database, Zap, TrendingUp, Users } from 'lucide-react';
 import { useI18n } from '../i18n';
 import { SectionTitle } from './shared/SectionTitle';
 
-const SkillTag = ({ label, desc }: { label: string, desc?: string }) => (
-  <div className="flex flex-col p-4 rounded-xl border border-border bg-bg-card hover:border-text-muted transition-colors w-[calc(50%-0.5rem)] md:w-[calc(33.33%-0.5rem)] flex-grow">
-    <div className="flex items-center gap-2 mb-2">
-      <Zap size={14} className="text-purple-500" />
+const SkillTag = ({ label, desc, icon: Icon }: { label: string, desc?: string, icon?: any }) => (
+  <div className="flex flex-col p-5 rounded-xl border border-border bg-bg-card hover:border-blue-500/30 hover:shadow-md transition-all">
+    <div className="flex items-center gap-3 mb-3">
+      <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
+        {Icon && <Icon size={18} className="text-blue-500" />}
+      </div>
       <span className="text-sm font-semibold text-accent">{label}</span>
     </div>
     {desc && <p className="text-xs text-text-secondary leading-relaxed">{desc}</p>}
@@ -56,12 +58,12 @@ export const ExperienceSection = () => {
   const { t } = useI18n();
   
   const SKILL_TAGS = [
-    { label: t('exp.tag.1.title'), desc: t('exp.tag.1.desc') },
-    { label: t('exp.tag.2.title'), desc: t('exp.tag.2.desc') },
-    { label: t('exp.tag.3.title'), desc: t('exp.tag.3.desc') },
-    { label: t('exp.tag.4.title'), desc: t('exp.tag.4.desc') },
-    { label: t('exp.tag.5.title'), desc: t('exp.tag.5.desc') },
-    { label: t('exp.tag.6.title'), desc: t('exp.tag.6.desc') }
+    { label: t('exp.tag.1.title'), desc: t('exp.tag.1.desc'), icon: Code },
+    { label: t('exp.tag.2.title'), desc: t('exp.tag.2.desc'), icon: Brain },
+    { label: t('exp.tag.3.title'), desc: t('exp.tag.3.desc'), icon: Database },
+    { label: t('exp.tag.4.title'), desc: t('exp.tag.4.desc'), icon: Zap },
+    { label: t('exp.tag.5.title'), desc: t('exp.tag.5.desc'), icon: TrendingUp },
+    { label: t('exp.tag.6.title'), desc: t('exp.tag.6.desc'), icon: Users }
   ];
 
   return (
@@ -72,14 +74,14 @@ export const ExperienceSection = () => {
         subtitle={t('exp.subtitle')}
       />
 
-      <div className="flex flex-wrap gap-2 mb-16">
-        {SKILL_TAGS.map(tag => <SkillTag key={tag.label} label={tag.label} desc={tag.desc} />)}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-16">
+        {SKILL_TAGS.map(tag => <SkillTag key={tag.label} label={tag.label} desc={tag.desc} icon={tag.icon} />)}
       </div>
 
       <div className="space-y-0">
         <ExperienceCard
-          company="江苏天合储能"
-          location="常州"
+          company={t('exp.company')}
+          location={t('exp.location')}
           period="2023.06 - Present"
           role={t('exp.job.1.role')}
           description={t('exp.job.1.desc')}
@@ -96,8 +98,8 @@ export const ExperienceSection = () => {
         </ExperienceCard>
 
         <ExperienceCard
-          company="江苏天合储能"
-          location="常州"
+          company={t('exp.company')}
+          location={t('exp.location')}
           period="2022.06 - 2023.05"
           role={t('exp.job.2.role')}
           description={t('exp.job.2.desc')}

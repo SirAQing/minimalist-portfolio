@@ -11,36 +11,54 @@ const SECTIONS = [
 
 export const SidebarNav = () => {
   const [activeSection, setActiveSection] = useState<string>('');
+  const [heroVisible, setHeroVisible] = useState(true);
   const { t } = useI18n();
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    // Section tracking observer
+    const sectionObserver = new IntersectionObserver(
       (entries) => {
-        // Find the section that is currently most visible
         const visibleEntries = entries.filter((entry) => entry.isIntersecting);
         if (visibleEntries.length > 0) {
-          // Sort by intersection ratio to get the most visible one
           visibleEntries.sort((a, b) => b.intersectionRatio - a.intersectionRatio);
           setActiveSection(visibleEntries[0].target.id);
         }
       },
       {
-        rootMargin: '-20% 0px -60% 0px', // Trigger when section is in the upper half of screen
+        rootMargin: '-20% 0px -60% 0px',
         threshold: [0, 0.25, 0.5, 0.75, 1],
       }
     );
 
     SECTIONS.forEach(({ id }) => {
       const el = document.getElementById(id);
-      if (el) observer.observe(el);
+      if (el) sectionObserver.observe(el);
     });
 
-    return () => observer.disconnect();
+    // Hero visibility observer — hide sidebar when hero is in view
+    const heroObserver = new IntersectionObserver(
+      ([entry]) => {
+        setHeroVisible(entry.isIntersecting);
+      },
+      { threshold: 0.15 }
+    );
+
+    const heroEl = document.getElementById('hero');
+    if (heroEl) heroObserver.observe(heroEl);
+
+    return () => {
+      sectionObserver.disconnect();
+      heroObserver.disconnect();
+    };
   }, []);
 
   return (
-    <nav className="hidden lg:block fixed left-8 top-1/2 -translate-y-1/2 z-40">
-      <ul className="space-y-4 border-l border-border-subtle ml-2 relative">
+    <nav
+      className={`hidden lg:block fixed left-8 top-1/2 -translate-y-1/2 z-40 transition-all duration-500 ${
+        heroVisible ? 'opacity-0 pointer-events-none translate-x-[-12px]' : 'opacity-100'
+      }`}
+    >
+      <ul className="space-y-4 border-l border-border ml-2 relative">
         {SECTIONS.map(({ id, labelKey }) => {
           const isActive = activeSection === id;
           return (
@@ -48,15 +66,15 @@ export const SidebarNav = () => {
               <a
                 href={`#${id}`}
                 className={`block pl-6 text-sm transition-colors duration-200 ${
-                  isActive ? 'text-teal-500 font-medium' : 'text-text-muted hover:text-text-primary'
+                  isActive ? 'text-teal-500 font-medium' : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 {/* Custom dot indicator for active/inactive state */}
-                <div 
+                <div
                   className={`absolute left-[-5px] top-1/2 -translate-y-1/2 w-[9px] h-[9px] rounded-full transition-all duration-300 ${
-                    isActive 
-                      ? 'bg-teal-500 ring-4 ring-teal-500/20' 
-                      : 'bg-bg-base border-2 border-border-subtle hover:border-text-muted'
+                    isActive
+                      ? 'bg-teal-500 ring-4 ring-teal-500/20'
+                      : 'bg-transparent border-2 border-border hover:border-text-muted'
                   }`}
                 />
                 {t(labelKey)}

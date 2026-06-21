@@ -1,3 +1,10 @@
+@import 'highlight.js/styles/github-dark.css';
+
+.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,6 +34,7 @@
     --dot-color: rgba(0, 0, 0, 0.05);
     --glow-primary: rgba(147, 197, 253, 0.4);
     --glow-secondary: rgba(233, 213, 255, 0.4);
+    --bg-section-alt: rgba(148, 163, 184, 0.06);
   }
 
   :root.dark {
@@ -53,6 +61,7 @@
     --dot-color: rgba(255, 255, 255, 0.05);
     --glow-primary: rgba(56, 189, 248, 0.1);
     --glow-secondary: rgba(168, 85, 247, 0.1);
+    --bg-section-alt: rgba(255, 255, 255, 0.03);
   }
 
   body {
@@ -60,9 +69,82 @@
   }
 }
 
+@layer components {
+  .prose-custom {
+    @apply text-text-secondary leading-relaxed;
+  }
+  .prose-custom h1, .prose-custom h2, .prose-custom h3, .prose-custom h4, .prose-custom h5, .prose-custom h6 {
+    @apply text-accent font-semibold tracking-tight;
+  }
+  .prose-custom p {
+    @apply mb-6 text-[15px] sm:text-base;
+  }
+  .prose-custom a {
+    @apply text-blue-500 hover:text-blue-600 transition-colors font-medium decoration-blue-500/30 underline underline-offset-4 hover:decoration-blue-600;
+  }
+  .prose-custom blockquote {
+    @apply pl-4 my-6 border-l-4 border-blue-400 dark:border-blue-500 py-3 pr-4 rounded-r-lg italic;
+  }
+  .prose-custom code {
+    @apply px-1.5 py-0.5 mx-0.5 rounded-md bg-bg-card border border-border-subtle text-[0.875em] text-blue-600 dark:text-blue-400 font-mono;
+  }
+  .prose-custom pre code {
+    @apply p-0 m-0 bg-transparent border-none text-inherit text-sm;
+  }
+  .prose-custom ul, .prose-custom ol {
+    @apply pl-6 mb-6;
+  }
+  .prose-custom li {
+    @apply mb-2;
+  }
+}
+
 .dot-bg {
   background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Hide native scrollbars on code blocks to prevent visual artifacts */
+.prose-custom pre::-webkit-scrollbar {
+  display: none;
+  height: 0;
+  width: 0;
+}
+.prose-custom pre {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Ensure transparent backgrounds inside code blocks */
+.prose-custom pre code,
+.prose-custom pre code.hljs,
+.prose-custom pre code span {
+  background: transparent !important;
+}
+
+/* For code blocks WITH explicit language: override github-dark.css defaults
+   that create nested scroll context and duplicate padding inside <pre> */
+.prose-custom pre code.hljs {
+  padding: 0 !important;
+  overflow-x: visible !important;
 }
 
 .hero-glow-1 {

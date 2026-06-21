@@ -1,52 +1,35 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Star, GitFork, BookOpen, MessageSquare } from 'lucide-react';
+import { motion, type Variants } from 'framer-motion';
+import { Star, GitFork, BookOpen, MessageSquare, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n';
 import avatarImg from '../assets/avatar.jpg';
 
-const AnimatedRoleText = ({ items }: { items: string[] }) => {
-  const [index, setIndex] = useState(0);
+const TypewriterText = ({ text }: { text: string }) => {
   const [displayedText, setDisplayedText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [done, setDone] = useState(false);
+
+  // Reset when text changes (e.g. language switch)
+  useEffect(() => {
+    setDisplayedText('');
+    setDone(false);
+  }, [text]);
 
   useEffect(() => {
-    const fullText = items[index];
-    if (!isDeleting) {
-      // Typing phase
-      if (displayedText.length < fullText.length) {
-        const timeout = setTimeout(() => {
-          setDisplayedText(fullText.slice(0, displayedText.length + 1));
-        }, 50);
-        return () => clearTimeout(timeout);
-      } else {
-        // Fully typed — hold for 1.5s then switch
-        const timeout = setTimeout(() => {
-          setIsDeleting(true);
-        }, 1500);
-        return () => clearTimeout(timeout);
-      }
-    } else {
-      // Quick fade out then switch to next item
+    if (done) return;
+    if (displayedText.length < text.length) {
       const timeout = setTimeout(() => {
-        setIsDeleting(false);
-        setDisplayedText('');
-        setIndex((prev) => (prev + 1) % items.length);
-      }, 300);
+        setDisplayedText(text.slice(0, displayedText.length + 1));
+      }, 60);
       return () => clearTimeout(timeout);
+    } else {
+      setDone(true);
     }
-  }, [displayedText, index, isDeleting, items]);
+  }, [displayedText, text, done]);
 
   return (
-    <span className="inline-block align-bottom min-w-[320px] md:min-w-[520px] text-left">
-      <motion.span
-        key={index + '-typing'}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isDeleting ? 0.3 : 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        {displayedText}
-      </motion.span>
-      <span className="animate-pulse text-blue-400 ml-0.5">|</span>
+    <span>
+      {displayedText}
+      {!done && <span className="animate-pulse text-blue-400 ml-0.5">|</span>}
     </span>
   );
 };
@@ -106,12 +89,32 @@ const PrimaryCTA = ({ href, label, icon: Icon, onClick }: { href?: string, label
 export const HeroSection = () => {
   const { t } = useI18n();
 
+  // Stagger entrance animation variants
+  const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+  };
+  const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+};
+
+const fadeIn: Variants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } }
+};
+
   return (
     <section id="hero" className="pt-20 pb-12 md:pt-32 md:pb-16 flex flex-col items-center text-center relative z-10 min-h-[90vh] justify-center">
-      <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 w-full max-w-5xl">
+      <motion.div
+        className="flex flex-col md:flex-row items-center gap-8 md:gap-12 w-full max-w-5xl"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
       
       {/* Avatar */}
-      <div className="relative group shrink-0">
+      <motion.div className="relative group shrink-0" variants={fadeIn}>
         <div className="relative w-40 h-40 md:w-48 md:h-48">
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 to-white/5 md:backdrop-blur-sm border border-white/20 shadow-2xl"></div>
@@ -119,7 +122,7 @@ export const HeroSection = () => {
             <div className="w-full h-full rounded-full overflow-hidden">
               <img
                 src={avatarImg}
-                alt="刘明青"
+                alt={t('hero.alt')}
                 className="w-full h-full object-cover bg-blue-900"
               />
             </div>
@@ -132,15 +135,15 @@ export const HeroSection = () => {
             <path d="m9 12 2 2 4-4"/>
           </svg>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="text-center md:text-left flex flex-col items-center md:items-start">
+      <motion.div className="text-center md:text-left flex flex-col items-center md:items-start" variants={fadeUp}>
         {/* Greeting */}
         <div className="flex items-center gap-2 mb-2">
           <span className="text-text-secondary text-lg">
             {t('hero.greeting')}{" "}
             <a href="#about" className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 font-semibold hover:opacity-80 transition-opacity">
-              @刘明青
+              @{t('hero.alt')}
             </a>
           </span>
         </div>
@@ -148,11 +151,12 @@ export const HeroSection = () => {
         {/* Main Title */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-accent mb-4 leading-tight">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">
-            {t('hero.title.1')}
+            <TypewriterText text={t('hero.title.1')} />
           </span>
           <br />
-          <span className="text-text-primary">
-            <AnimatedRoleText items={[t('hero.title.2.1'), t('hero.title.2.2'), t('hero.title.2.3')]} />
+          <span className="text-text-primary text-lg sm:text-xl md:text-2xl lg:text-3xl leading-snug">
+            {t('hero.title.2.2')}<br />
+            {t('hero.title.2.3')}
           </span>
         </h1>
 
@@ -161,34 +165,63 @@ export const HeroSection = () => {
           <RoleBadge label={t('hero.badge.builder')} />
           <RoleBadge label={t('hero.badge.operator')} active />
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
 
-      <div className="text-center md:text-left flex flex-col items-center md:items-start mt-12 md:mt-16 w-full max-w-5xl">
+      <motion.div
+        className="text-center md:text-left flex flex-col items-center md:items-start mt-12 md:mt-16 w-full max-w-5xl"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Patents */}
-        <div className="flex flex-col items-center md:items-start mb-16">
+        <motion.div className="flex flex-col items-center md:items-start mb-16" variants={fadeUp}>
           <span className="text-text-muted text-[10px] uppercase tracking-widest mb-3">{t('hero.press')}</span>
           <div className="flex flex-wrap items-center gap-6">
           <div className="px-4 py-2 rounded-lg border border-border bg-bg-pill text-xs text-text-secondary">
             <span className="font-medium text-text-primary">CN119166678A</span>
-            <span className="text-text-muted ml-2">第一发明人</span>
+            <span className="text-text-muted ml-2">{t('hero.patent.inventor.1')}</span>
           </div>
           <div className="px-4 py-2 rounded-lg border border-border bg-bg-pill text-xs text-text-secondary">
             <span className="font-medium text-text-primary">CN120045414A</span>
-            <span className="text-text-muted ml-2">第三发明人</span>
+            <span className="text-text-muted ml-2">{t('hero.patent.inventor.3')}</span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Bio / Description */}
-      <div className="max-w-2xl text-center md:text-left mb-12 space-y-6">
-        <div className="text-xl md:text-2xl font-medium text-accent">
-          4 年锂电行业 · 10+ 数据系统 · 2 项发明专利
+      {/* Stats */}
+      <motion.div variants={fadeUp}>
+        <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="flex flex-col items-center md:items-start px-5 py-3 rounded-xl border border-border bg-bg-pill min-w-[120px]">
+              <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">
+                {t(`hero.stat.${i}.num`)}
+              </span>
+              <span className="text-xs text-text-secondary mt-1">{t(`hero.stat.${i}.label`)}</span>
+            </div>
+          ))}
         </div>
-      </div>
+        {/* Trust Bar */}
+        <div className="text-[11px] text-text-muted uppercase tracking-[0.2em] text-center md:text-left mb-8">
+          {t('hero.trust')}
+        </div>
+      </motion.div>
+
+      {/* Story / Narrative Bio */}
+      <motion.div className="max-w-2xl text-center md:text-left mb-12 space-y-4" variants={fadeUp}>
+        <p className="text-lg text-purple-400 italic">
+          {t('hero.story.lead')}
+        </p>
+        <p className="text-sm text-text-secondary leading-relaxed">
+          {t('hero.story.p1')}
+        </p>
+        <p className="text-sm text-text-secondary leading-relaxed">
+          {t('hero.story.p2')}
+        </p>
+      </motion.div>
 
       {/* CTA Buttons */}
-      <div className="flex flex-wrap justify-center md:justify-start gap-4 w-full">
+      <motion.div className="flex flex-wrap justify-center md:justify-start gap-4 w-full" variants={fadeUp}>
         <NavCTA href="#experience" label={t('hero.cta.path')} icon={BookOpen} />
         <NavCTA href="#projects" label={t('hero.cta.projects')} icon={GitFork} />
         <PrimaryCTA 
@@ -196,8 +229,28 @@ export const HeroSection = () => {
           icon={MessageSquare} 
           onClick={() => window.dispatchEvent(new CustomEvent('open-chat'))}
         />
-      </div>
-      </div>
+      </motion.div>
+
+      {/* Scroll Guidance Arrow */}
+      <motion.div
+        className="w-full flex justify-center md:justify-start mt-10"
+        variants={fadeUp}
+      >
+        <button
+          onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
+          className="flex flex-col items-center gap-1 text-text-muted hover:text-accent transition-colors group cursor-pointer"
+          aria-label="Scroll to experience"
+        >
+          <span className="text-xs tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">SCROLL</span>
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <ChevronDown size={24} />
+          </motion.div>
+        </button>
+      </motion.div>
+      </motion.div>
     </section>
   );
 };
