@@ -28,8 +28,8 @@ URGENT_KEYWORDS = os.getenv("URGENT_KEYWORDS", "人工,联系本人,真人,urgen
 # Database
 DATABASE_PATH = os.getenv("DATABASE_PATH", "hermes.db")
 
-# CORS — set to "*" in production to allow all origins, or comma-separated list
-_CORS_RAW = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:5174,http://localhost:8000")
+# CORS — defaults to "*" (allow all). Set to comma-separated origins to restrict.
+_CORS_RAW = os.getenv("CORS_ORIGINS", "*")
 CORS_ORIGINS = ["*"] if _CORS_RAW.strip() == "*" else [o.strip() for o in _CORS_RAW.split(",") if o.strip()]
 
 # System prompt for the AI agent

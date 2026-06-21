@@ -73,7 +73,7 @@ app = FastAPI(title="Hermes Chat API", version="1.0.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
-    allow_credentials=True,
+    allow_credentials=False if CORS_ORIGINS == ["*"] else True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
