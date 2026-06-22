@@ -18,7 +18,10 @@ npm run preview   # Preview production build
 
 # Hermes backend (separate terminal, from portfolio-react/hermes/)
 pip install -r requirements.txt
-python main.py    # → localhost:8000
+python main.py    # → localhost:8000, GET / → health check
+
+# Docker Compose (production)
+docker compose up -d --build   # frontend :80 + hermes-api :8000
 ```
 
 ## Architecture
@@ -48,15 +51,17 @@ React Context in `src/i18n.tsx`. Single `translations` object keyed by `'en' | '
 **Frontend**: `FloatingAssistant.tsx` — SSE streaming to `${VITE_API_BASE}/api/chat/stream`. Opens via floating button or `'open-chat'` custom event from HeroSection CTA. Quick action buttons send pre-set queries.
 
 **Backend** (`hermes/`): FastAPI server with DeepSeek API integration. Key files:
-- `main.py` — SSE streaming endpoint, conversation CRUD, scheduled summary loop
-- `config.py` — `SYSTEM_PROMPT` (controls AI persona + contact info), env vars
+- `main.py` — SSE streaming, conversation CRUD, scheduled summary loop, `GET /` health check
+- `config.py` — `SYSTEM_PROMPT` (AI persona + contact info), `CORS_ALLOW_ALL` (default true), env vars
 - `llm.py` — DeepSeek API calls (streaming + non-streaming)
 - `models.py` — SQLite schema (conversations, messages)
 - `notify.py` — Feishu webhook + PushPlus (WeChat) real-time push + scheduled summaries
 
 Stream protocol: `data: {"type":"conv_id"|"chunk"|"done", ...}` JSON lines.
 
-**Contact info constraint**: The AI must only return `lmq0205a@163.com` and X `@liumingqingoh`. This is enforced in `config.py` SYSTEM_PROMPT. If changing contact methods, update both the i18n `contact.*` keys AND the system prompt.
+**CORS**: Defaults to allow-all (`CORS_ALLOW_ALL=true`). To restrict, set `CORS_ALLOW_ALL=false` and `CORS_ORIGINS=comma,separated,origins`.
+
+**Contact info constraint**: The AI must only return `lmq0205a@163.com` and X `@liumingqingoh`. Enforced in `config.py` SYSTEM_PROMPT. If changing contact methods, update both the i18n `contact.*` keys AND the system prompt.
 
 ### Knowledge Base
 
