@@ -1,10 +1,57 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Briefcase, GitFork, HelpCircle, Mail } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import type { Components } from 'react-markdown';
 import avatarImg from '../assets/avatar.jpg';
 import { useI18n } from '../i18n';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
+
+// Chat-appropriate markdown components — lightweight, no document-style formatting
+const chatMdComponents: Components = {
+  p: ({ children }) => <p className="my-1.5 leading-relaxed">{children}</p>,
+  strong: ({ children }) => <strong className="font-semibold text-accent">{children}</strong>,
+  em: ({ children }) => <em>{children}</em>,
+  ul: ({ children }) => <ul className="my-2 space-y-0.5 list-disc pl-5 marker:text-text-muted">{children}</ul>,
+  ol: ({ children }) => <ol className="my-2 space-y-0.5 list-decimal pl-5 marker:text-text-muted">{children}</ol>,
+  li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+  a: ({ href, children }) => (
+    <a href={href} target="_blank" rel="noreferrer" className="text-blue-500 underline decoration-blue-500/30 underline-offset-2 hover:text-blue-600 transition-colors">
+      {children}
+    </a>
+  ),
+  code: ({ className, children, ...props }) => {
+    const isInline = !className;
+    return isInline
+      ? <code className="px-1 py-0.5 rounded bg-black/10 dark:bg-white/10 text-[0.9em] font-mono" {...props}>{children}</code>
+      : <code className={className} {...props}>{children}</code>;
+  },
+  pre: ({ children }) => (
+    <pre className="my-2 p-3 rounded-lg bg-black/5 dark:bg-white/5 border border-border-subtle overflow-x-auto text-[13px] leading-relaxed">
+      {children}
+    </pre>
+  ),
+  blockquote: ({ children }) => (
+    <blockquote className="my-2 pl-3 border-l-3 border-blue-400/40 text-text-secondary/80 italic">{children}</blockquote>
+  ),
+  table: ({ children }) => (
+    <div className="overflow-x-auto my-2 rounded-lg border border-border-subtle">
+      <table className="w-full text-xs text-left">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => <thead className="bg-bg-section-alt border-b border-border-subtle">{children}</thead>,
+  th: ({ children }) => <th className="px-2.5 py-1.5 font-semibold whitespace-nowrap">{children}</th>,
+  td: ({ children }) => <td className="px-2.5 py-1.5 border-t border-border-subtle/50">{children}</td>,
+  hr: () => <hr className="my-3 border-border-subtle" />,
+  h1: ({ children }) => <h1 className="text-base font-bold mt-3 mb-1">{children}</h1>,
+  h2: ({ children }) => <h2 className="text-[15px] font-semibold mt-3 mb-1">{children}</h2>,
+  h3: ({ children }) => <h3 className="text-sm font-semibold mt-2 mb-1">{children}</h3>,
+  h4: ({ children }) => <h4 className="text-sm font-medium mt-2 mb-0.5">{children}</h4>,
+  h5: ({ children }) => <h5 className="text-sm font-medium mt-2 mb-0.5">{children}</h5>,
+  h6: ({ children }) => <h6 className="text-sm font-medium mt-2 mb-0.5">{children}</h6>,
+};
 
 interface Message {
   role: 'ai' | 'user';
@@ -229,7 +276,11 @@ export const FloatingAssistant = () => {
                       </span>
                     ) : (
                       <>
-                        <span className="whitespace-pre-wrap">{msg.content}</span>
+                        <div className="chat-markdown text-sm leading-relaxed">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]} components={chatMdComponents}>
+                            {msg.content}
+                          </ReactMarkdown>
+                        </div>
                         {msg.streaming && (
                           <span className="inline-block w-1 h-3.5 bg-blue-400 animate-pulse ml-0.5 align-middle"></span>
                         )}
