@@ -106,6 +106,32 @@ async def health():
     return {"status": "ok", "service": "hermes"}
 
 
+@app.get("/api/warmup")
+async def warmup():
+    """
+    Pre-warm endpoint for cold-start mitigation.
+    Called by frontend on page load so the first real API call is fast.
+    Touches DB and optionally pings the LLM provider.
+    """
+    import time as _time
+    start = _time.time()
+
+    # Touch SQLite to ensure DB file + schema are loaded in memory
+    try:
+        from models import get_db
+        with get_db() as conn:
+            conn.execute("SELECT 1")
+    except Exception:
+        pass
+
+    elapsed_ms = round((_time.time() - start) * 1000)
+    return {
+        "status": "ok",
+        "message": "Hermes is warm",
+        "latency_ms": elapsed_ms,
+    }
+
+
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
     """

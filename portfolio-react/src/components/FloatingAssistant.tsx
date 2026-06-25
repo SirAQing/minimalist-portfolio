@@ -18,9 +18,30 @@ export const FloatingAssistant = () => {
   const [inputValue, setInputValue] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [convId, setConvId] = useState<string | null>(null);
+  const [loadingStage, setLoadingStage] = useState(0);
   const { t, lang } = useI18n();
   const chatRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const loadingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Progressive loading hints for cold starts
+  const LOADING_HINTS = [
+    '',                          // 0-2s: dots only
+    t('chat.connecting'),        // 2-5s: "Connecting..."
+    t('chat.warming'),           // 5s+: "AI is warming up..."
+  ];
+
+  const clearLoadingTimer = () => {
+    if (loadingTimerRef.current) {
+      clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = null;
+    }
+  };
+
+  // Clear timer on unmount
+  useEffect(() => {
+    return () => clearLoadingTimer();
+  }, []);
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -63,6 +84,16 @@ export const FloatingAssistant = () => {
 
     setInputValue('');
     setIsSending(true);
+    setLoadingStage(0);
+    clearLoadingTimer();
+
+    // Progressive loading hints: stage 0→1 after 2s, 1→2 after another 3s
+    loadingTimerRef.current = setTimeout(() => {
+      setLoadingStage(1);
+      loadingTimerRef.current = setTimeout(() => {
+        setLoadingStage(2);
+      }, 3000);
+    }, 2000);
 
     // Add visitor message
     const newMessages: Message[] = [...messages, { role: 'user', content: text }];
@@ -107,6 +138,8 @@ export const FloatingAssistant = () => {
             if (data.type === 'conv_id') {
               setConvId(data.conversation_id);
             } else if (data.type === 'chunk') {
+              clearLoadingTimer();
+              setLoadingStage(0);
               fullReply += data.content;
               setMessages(prev => {
                 const updated = [...prev];
@@ -142,6 +175,8 @@ export const FloatingAssistant = () => {
         return updated;
       });
     } finally {
+      clearLoadingTimer();
+      setLoadingStage(0);
       setIsSending(false);
     }
   };
@@ -180,10 +215,17 @@ export const FloatingAssistant = () => {
                 <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-blue-500 text-white rounded-br-none' : 'bg-bg-pill border border-border text-text-primary rounded-tl-none'}`}>
                     {msg.streaming && !msg.content ? (
-                      <span className="flex items-center gap-1 text-text-muted">
-                        <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                        <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                        <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                      <span className="flex flex-col items-start gap-1.5">
+                        <span className="flex items-center gap-1 text-text-muted">
+                          <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                          <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                          <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                        </span>
+                        {loadingStage > 0 && (
+                          <span className="text-[11px] text-text-muted/60 animate-pulse">
+                            {LOADING_HINTS[loadingStage]}
+                          </span>
+                        )}
                       </span>
                     ) : (
                       <>

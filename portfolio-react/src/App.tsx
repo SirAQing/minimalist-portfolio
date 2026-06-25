@@ -8,6 +8,9 @@ import { FloatingAssistant } from './components/FloatingAssistant';
 import { KnowledgeBase } from './components/knowledge/KnowledgeBase';
 import { useHashRouter } from './hooks/useHashRouter';
 import { I18nProvider, useI18n } from './i18n';
+import { useEffect } from 'react';
+
+const API_BASE = import.meta.env.VITE_API_BASE || '';
 
 const ContactSection = () => {
   const { t } = useI18n();
@@ -44,6 +47,11 @@ const Footer = () => {
 
 function AppContent() {
   const [route, navigate] = useHashRouter();
+
+  // Pre-warm the backend on first page load so AI chat is responsive
+  useEffect(() => {
+    fetch(`${API_BASE}/api/warmup`).catch(() => {});
+  }, []);
 
   // Knowledge base page
   if (route.page === 'knowledge') {
